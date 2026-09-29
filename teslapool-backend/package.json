@@ -1,0 +1,68 @@
+{
+  "name": "teslapool-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TeslaPool: transaction-safe, explainable ride-pooling engine for Dhaka (Express + PostgreSQL + ML advisor)",
+  "main": "dist/src/main.js",
+  "engines": {
+    "node": ">=20.18 <23"
+  },
+  "scripts": {
+    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "start": "node dist/src/main.js",
+    "start:prod": "sh scripts/docker-entrypoint.sh",
+    "dev": "tsx watch src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:reset": "prisma migrate reset --force",
+    "test": "jest --selectProjects unit",
+    "test:unit": "jest --selectProjects unit",
+    "test:integration": "jest --selectProjects db --runInBand --testPathPattern tests/integration",
+    "test:e2e": "jest --selectProjects db --runInBand --testPathPattern tests/e2e",
+    "test:concurrency": "jest --selectProjects db --runInBand --testPathPattern tests/concurrency",
+    "test:all": "jest --runInBand",
+    "demo": "tsx scripts/demo.ts",
+    "ml:train": "python ml/training/train.py",
+    "verify": "npm run lint && npm run test:all",
+    "openapi:export": "tsx scripts/export-openapi.ts"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
+    "@prisma/client": "6.19.3",
+    "argon2": "^0.41.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "6.19.3",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.5.0",
+    "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.6",
+    "eslint": "^9.39.0",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.46.0"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.2"
+  }
+}

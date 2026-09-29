@@ -1,0 +1,10 @@
+{
+  "name": "TeslaPool",
+  "short_name": "TeslaPool",
+  "description": "Shared auto-rickshaw rides for Dhaka.",
+  "start_url": "/ride/new",
+  "display": "standalone",
+  "background_color": "#FFFEE9",
+  "theme_color": "#C1F11D",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

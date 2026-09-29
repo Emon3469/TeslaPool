@@ -9,7 +9,7 @@ A transaction-safe, explainable ride-pooling engine for Dhaka’s three-seat aut
 [![Live demo](https://img.shields.io/badge/▶_Live_demo-teslapool.vercel.app-C1F11D?style=for-the-badge&labelColor=141414)](https://teslapool.vercel.app/)
 [![Technical overview](https://img.shields.io/badge/📄_Technical_overview-PDF-141414?style=for-the-badge)](docs/TeslaPool-Technical-Overview.pdf)
 
-![Version](https://img.shields.io/badge/version-1.0.1-141414)
+![Version](https://img.shields.io/badge/version-1.0.2-141414)
 ![Tests](https://img.shields.io/badge/tests-298_passing-3d5200)
 ![Capacity violations](https://img.shields.io/badge/capacity_violations-0-3d5200)
 ![npm audit](https://img.shields.io/badge/npm_audit-0_vulnerabilities-3d5200)

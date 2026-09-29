@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { PrismaClient } from '@prisma/client';
 import { Router } from 'express';
 import { asyncHandler } from '../common/http';
@@ -5,7 +7,16 @@ import { registry, z } from '../docs/openapi-registry';
 import type { MlPredictor } from '../predictions/ml-predictor';
 
 const started = Date.now();
-const version = process.env.npm_package_version ?? '1.0.0';
+// Read package.json from the working directory (the backend root locally, /app in the container):
+// npm_package_version only exists when started through npm, and the container starts node directly.
+function readVersion(): string {
+  try {
+    return (JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as { version?: string }).version ?? 'unknown';
+  } catch {
+    return process.env.npm_package_version ?? 'unknown';
+  }
+}
+const version = readVersion();
 
 registry.registerPath({
   method: 'get', path: '/health', tags: ['Health'], summary: 'Liveness: the process is up and serving HTTP (no dependencies checked)',

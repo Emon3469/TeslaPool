@@ -32,7 +32,7 @@ describe('plain-language explanations', () => {
     ['CAPACITY', false, 'CAPACITY_EXCEEDED', { available: 1, requested: 2 }, 'Only 1 seat left, 2 requested'],
     ['PICKUP_DISTANCE', true, 'PICKUP_COMPATIBLE', { existingPassengers: 0, maxHopsToExistingPickups: 0 }, 'First passenger: any pickup zone works'],
     ['PICKUP_DISTANCE', true, 'PICKUP_COMPATIBLE', { existingPassengers: 2, maxHopsToExistingPickups: 0 }, 'Same pickup zone as current passengers'],
-    ['DESTINATION_DISTANCE', false, 'DESTINATION_TOO_FAR', { existingPassengers: 1, maxHopsToExistingDropoffs: 4, limitHops: 2 }, "Destination is 4 zones from current passengers' (limit 2)"],
+    ['DESTINATION_DISTANCE', false, 'DESTINATION_TOO_FAR', { existingPassengers: 1, maxHopsToExistingDropoffs: 4, limitHops: 2 }, "Destination is 4 zones from current passengers (limit 2)"],
     ['POOL_STATE', false, 'LATE_JOIN_NOT_ALLOWED', {}, 'Driver has already arrived for pickup; late joins are disabled'],
   ] as const)('%s %s -> %s', (rule, passed, code, detail, expected) => {
     expect(describeCheck(rule, passed, code, detail)).toBe(expected);

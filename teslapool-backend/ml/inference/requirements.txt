@@ -1,0 +1,8 @@
+# Pinned to the versions recorded in ml/models/model_card.json.
+# Pickled sklearn pipelines must be loaded with the version that trained them.
+scikit-learn==1.7.2
+pandas==2.3.2
+numpy==2.3.3
+joblib==1.5.2
+fastapi==0.136.1
+uvicorn==0.35.0

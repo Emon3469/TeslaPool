@@ -38,8 +38,7 @@ COPY --chown=node:node package.json ./
 COPY --chown=node:node prisma ./prisma
 COPY --chown=node:node scripts/docker-entrypoint.sh ./scripts/docker-entrypoint.sh
 # Defensive: strip Windows line endings in case the script was checked out with CRLF.
-RUN sed -i 's/
-$//' ./scripts/docker-entrypoint.sh
+RUN sed -i 's/\r$//' ./scripts/docker-entrypoint.sh
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=3 \

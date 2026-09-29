@@ -1,0 +1,82 @@
+{
+  "trainedAt": "2026-09-28T16:37:44+00:00",
+  "dataset": {
+    "file": "dhaka_small_vehicle_fares.csv",
+    "rows": 100,
+    "sha256": "3c88506604f3d686941f6da27387a06de5d32e3f0376d9b64ee767cbc307ef74"
+  },
+  "libraries": {
+    "python": "3.13.5",
+    "scikit-learn": "1.7.2",
+    "pandas": "2.3.2",
+    "numpy": "2.3.3"
+  },
+  "eta": {
+    "modelName": "eta",
+    "modelVersion": "eta-v1",
+    "algorithm": "Ridge",
+    "file": "eta/eta-v1.joblib",
+    "features": [
+      "Distance_KM",
+      "Surge_Multiplier",
+      "traffic_ord",
+      "is_same_zone",
+      "dist_x_low",
+      "dist_x_medium",
+      "dist_x_high",
+      "dist_x_gridlock",
+      "Vehicle_Type",
+      "Pickup_Zone",
+      "Dropoff_Zone",
+      "Traffic_Condition",
+      "Weather",
+      "Time_of_Day"
+    ],
+    "target": "Duration_Minutes",
+    "cv": {
+      "mae": 4.38,
+      "mae_std": 1.127,
+      "rmse": 6.191,
+      "rmse_std": 1.716,
+      "r2": 0.976,
+      "r2_std": 0.011
+    }
+  },
+  "fare": {
+    "modelName": "fare",
+    "modelVersion": "fare-v1",
+    "algorithm": "ExtraTrees",
+    "file": "fare/fare-v1.joblib",
+    "features": [
+      "Distance_KM",
+      "Surge_Multiplier",
+      "traffic_ord",
+      "is_same_zone",
+      "dist_x_low",
+      "dist_x_medium",
+      "dist_x_high",
+      "dist_x_gridlock",
+      "predicted_duration_min",
+      "Vehicle_Type",
+      "Pickup_Zone",
+      "Dropoff_Zone",
+      "Traffic_Condition",
+      "Weather",
+      "Time_of_Day"
+    ],
+    "target": "Fare_BDT",
+    "cv": {
+      "mae": 36.314,
+      "mae_std": 11.324,
+      "rmse": 54.687,
+      "rmse_std": 19.709,
+      "r2": 0.935,
+      "r2_std": 0.041
+    }
+  },
+  "limitations": [
+    "100-row synthetic-scale dataset: prototype only, not production accuracy.",
+    "Distance_KM in training is measured trip distance; at request time the backend supplies a zone-graph estimate.",
+    "Only three vehicle types and ten zones are represented; anything else is out of distribution."
+  ]
+}

@@ -1,0 +1,101 @@
+Trip_ID,Vehicle_Type,Pickup_Zone,Dropoff_Zone,Pickup_Latitude,Pickup_Longitude,Dropoff_Latitude,Dropoff_Longitude,Distance_KM,Duration_Minutes,Traffic_Condition,Weather,Time_of_Day,Surge_Multiplier,Fare_BDT,Payment_Method
+DKA-1001,CNG Auto-Rickshaw,Banani,Gulshan,23.79612,90.40215,23.7889,90.40382,1.21,4,Low,Overcast,Morning Peak,1.0,90,bKash
+DKA-1002,CNG Auto-Rickshaw,Gulshan,Banani,23.78969,90.40785,23.78897,90.40169,0.89,11,Gridlock,Clear,Morning Peak,1.23,120,bKash
+DKA-1003,Rickshaw,Dhanmondi,Mohakhali,23.7445,90.37075,23.78217,90.39887,1.83,14,High,Rainy,Morning Peak,1.4,110,Cash
+DKA-1004,CNG Auto-Rickshaw,Mohakhali,Banani,23.77812,90.40379,23.79489,90.40832,2.9,14,Medium,Overcast,Morning Peak,1.0,150,Cash
+DKA-1005,Bike (Ride-share),Uttara,Mirpur,23.88075,90.38305,23.80926,90.3674,11.91,69,High,Clear,Evening Peak,1.21,330,bKash
+DKA-1006,Bike (Ride-share),Banani,Azimpur,23.79505,90.40504,23.72775,90.38502,11.89,46,Medium,Overcast,Morning Peak,1.0,240,Nagad
+DKA-1007,CNG Auto-Rickshaw,Uttara,Gulshan,23.87895,90.37851,23.78816,90.41193,16.86,126,High,Clear,Night,1.3,840,bKash
+DKA-1008,Bike (Ride-share),Dhanmondi,Mirpur,23.7425,90.37665,23.80599,90.37107,9.52,88,Gridlock,Rainy,Morning Peak,1.67,440,Visa/Mastercard
+DKA-1009,Bike (Ride-share),Gulshan,Banani,23.78903,90.4044,23.7955,90.40566,1.06,10,Gridlock,Overcast,Morning Peak,1.4,90,Nagad
+DKA-1010,Rickshaw,Banani,Farmgate,23.79621,90.40739,23.7545,90.38514,2.03,15,High,Overcast,Evening Peak,1.33,110,Cash
+DKA-1011,CNG Auto-Rickshaw,Farmgate,Azimpur,23.75309,90.38594,23.72692,90.38993,4.14,14,Low,Overcast,Night,1.0,170,bKash
+DKA-1012,Rickshaw,Gulshan,Banani,23.79679,90.41159,23.79702,90.40278,1.16,6,Medium,Overcast,Morning Peak,1.0,60,Cash
+DKA-1013,CNG Auto-Rickshaw,Bashundhara R/A,Banani,23.82408,90.42473,23.78996,90.4063,7.08,35,Medium,Rainy,Off-Peak,1.36,370,bKash
+DKA-1014,CNG Auto-Rickshaw,Farmgate,Uttara,23.75823,90.38619,23.87762,90.37823,17.58,211,Gridlock,Clear,Evening Peak,1.17,980,Cash
+DKA-1015,Rickshaw,Gulshan,Azimpur,23.79304,90.40868,23.72537,90.38748,1.42,5,Low,Rainy,Evening Peak,1.22,80,Cash
+DKA-1016,Rickshaw,Bashundhara R/A,Uttara,23.81969,90.42663,23.87972,90.38026,2.92,35,Gridlock,Clear,Evening Peak,1.13,120,Cash
+DKA-1017,Rickshaw,Mohakhali,Bashundhara R/A,23.78124,90.39604,23.82083,90.42586,1.89,14,High,Clear,Night,1.17,90,Cash
+DKA-1018,CNG Auto-Rickshaw,Dhanmondi,Mohakhali,23.74293,90.37383,23.78134,90.39625,8.19,27,Low,Clear,Morning Peak,1.0,280,Cash
+DKA-1019,Rickshaw,Uttara,Dhanmondi,23.87496,90.37931,23.74975,90.37822,1.82,22,Gridlock,Rainy,Night,1.4,110,Cash
+DKA-1020,CNG Auto-Rickshaw,Farmgate,Bashundhara R/A,23.75265,90.38517,23.82399,90.42519,15.0,50,Low,Overcast,Morning Peak,1.0,460,bKash
+DKA-1021,CNG Auto-Rickshaw,Gulshan,Azimpur,23.79227,90.41199,23.73061,90.38097,12.51,42,Low,Clear,Morning Peak,1.0,390,Cash
+DKA-1022,CNG Auto-Rickshaw,Uttara,Mohakhali,23.8721,90.3834,23.77506,90.40145,15.77,53,Low,Rainy,Evening Peak,1.4,670,bKash
+DKA-1023,Bike (Ride-share),Uttara,Motijheel,23.87329,90.37846,23.73472,90.4154,23.94,61,Low,Clear,Morning Peak,1.0,420,Visa/Mastercard
+DKA-1024,Rickshaw,Banani,Farmgate,23.79083,90.40235,23.76043,90.39101,1.8,9,Medium,Rainy,Morning Peak,1.4,100,Cash
+DKA-1025,Rickshaw,Farmgate,Mirpur,23.76042,90.38324,23.80938,90.36624,2.8,14,Medium,Rainy,Evening Peak,1.28,130,Cash
+DKA-1026,CNG Auto-Rickshaw,Uttara,Mirpur,23.87595,90.37701,23.80968,90.36411,10.84,130,Gridlock,Rainy,Evening Peak,1.41,760,Cash
+DKA-1027,CNG Auto-Rickshaw,Dhanmondi,Bashundhara R/A,23.74662,90.37348,23.8144,90.42015,15.35,77,Medium,Overcast,Evening Peak,1.0,520,Cash
+DKA-1028,Rickshaw,Azimpur,Farmgate,23.72678,90.38167,23.75418,90.39119,3.23,16,Medium,Overcast,Morning Peak,1.0,110,Cash
+DKA-1029,Rickshaw,Motijheel,Farmgate,23.73684,90.41646,23.75731,90.38375,3.13,16,Medium,Rainy,Night,1.21,130,Cash
+DKA-1030,Bike (Ride-share),Uttara,Mirpur,23.87249,90.38151,23.80443,90.36399,11.68,45,Medium,Clear,Evening Peak,1.0,240,Visa/Mastercard
+DKA-1031,Rickshaw,Mirpur,Uttara,23.80283,90.3702,23.87488,90.37729,3.41,26,High,Rainy,Morning Peak,1.4,160,Cash
+DKA-1032,Bike (Ride-share),Banani,Mirpur,23.79049,90.40933,23.80325,90.36468,7.46,43,High,Overcast,Morning Peak,1.34,250,Visa/Mastercard
+DKA-1033,CNG Auto-Rickshaw,Mohakhali,Azimpur,23.7745,90.39594,23.72966,90.3856,7.54,38,Medium,Rainy,Evening Peak,1.33,380,bKash
+DKA-1034,CNG Auto-Rickshaw,Banani,Mirpur,23.79377,90.40637,23.80386,90.37057,5.96,30,Medium,Clear,Night,1.0,240,bKash
+DKA-1035,Rickshaw,Dhanmondi,Azimpur,23.74679,90.37326,23.73364,90.38344,3.12,37,Gridlock,Overcast,Night,1.28,140,Cash
+DKA-1036,CNG Auto-Rickshaw,Bashundhara R/A,Uttara,23.81941,90.42734,23.8805,90.38186,14.27,48,Low,Rainy,Morning Peak,1.35,600,bKash
+DKA-1037,Bike (Ride-share),Uttara,Mirpur,23.87315,90.37649,23.80084,90.36605,11.36,29,Low,Rainy,Night,1.32,290,bKash
+DKA-1038,Rickshaw,Bashundhara R/A,Mohakhali,23.81674,90.42596,23.77266,90.40301,2.9,14,Medium,Clear,Morning Peak,1.0,100,Cash
+DKA-1039,CNG Auto-Rickshaw,Farmgate,Uttara,23.76027,90.38341,23.87223,90.37915,16.08,121,High,Rainy,Night,1.5,940,bKash
+DKA-1040,CNG Auto-Rickshaw,Dhanmondi,Bashundhara R/A,23.7456,90.37672,23.8227,90.42217,16.49,198,Gridlock,Overcast,Morning Peak,1.17,920,bKash
+DKA-1041,Rickshaw,Mirpur,Uttara,23.80332,90.3668,23.8763,90.37588,1.83,9,Medium,Overcast,Morning Peak,1.0,80,Cash
+DKA-1042,CNG Auto-Rickshaw,Mohakhali,Motijheel,23.77803,90.39966,23.73007,90.4166,8.81,29,Low,Overcast,Night,1.0,290,bKash
+DKA-1043,CNG Auto-Rickshaw,Gulshan,Motijheel,23.79049,90.4067,23.73692,90.42076,9.23,46,Medium,Rainy,Night,1.27,430,bKash
+DKA-1044,Bike (Ride-share),Gulshan,Mohakhali,23.79086,90.40959,23.77664,90.39715,3.56,14,Medium,Overcast,Night,1.0,100,Cash
+DKA-1045,Bike (Ride-share),Azimpur,Gulshan,23.72614,90.38469,23.79617,90.40462,12.26,113,Gridlock,Rainy,Evening Peak,1.46,480,Visa/Mastercard
+DKA-1046,Bike (Ride-share),Mohakhali,Mirpur,23.78095,90.4002,23.80809,90.36412,8.37,32,Medium,Overcast,Morning Peak,1.0,180,Cash
+DKA-1047,CNG Auto-Rickshaw,Gulshan,Uttara,23.78949,90.403,23.87242,90.37576,14.98,50,Low,Overcast,Night,1.0,460,Cash
+DKA-1048,Rickshaw,Mirpur,Motijheel,23.80228,90.36967,23.73548,90.41355,3.4,11,Low,Overcast,Evening Peak,1.0,120,Cash
+DKA-1049,CNG Auto-Rickshaw,Azimpur,Mohakhali,23.72927,90.38755,23.77336,90.40241,8.01,40,Medium,Clear,Morning Peak,1.0,300,bKash
+DKA-1050,Bike (Ride-share),Azimpur,Gulshan,23.72877,90.38468,23.79121,90.40786,11.62,30,Low,Rainy,Night,1.45,320,Cash
+DKA-1051,Bike (Ride-share),Motijheel,Bashundhara R/A,23.73507,90.41675,23.82164,90.42905,13.58,125,Gridlock,Rainy,Evening Peak,1.65,600,Nagad
+DKA-1052,CNG Auto-Rickshaw,Uttara,Banani,23.87369,90.37901,23.7962,90.4054,14.12,169,Gridlock,Rainy,Night,1.5,1020,Cash
+DKA-1053,Bike (Ride-share),Uttara,Motijheel,23.87888,90.3779,23.7368,90.41941,25.01,64,Low,Overcast,Morning Peak,1.0,440,bKash
+DKA-1054,Bike (Ride-share),Uttara,Mohakhali,23.87579,90.38208,23.77951,90.40196,15.89,147,Gridlock,Clear,Night,1.13,470,bKash
+DKA-1055,CNG Auto-Rickshaw,Uttara,Mirpur,23.87754,90.37819,23.80613,90.36704,11.33,85,High,Rainy,Off-Peak,1.5,680,bKash
+DKA-1056,Rickshaw,Banani,Uttara,23.79186,90.40713,23.88041,90.3814,1.38,17,Gridlock,Rainy,Morning Peak,1.4,90,Cash
+DKA-1057,Bike (Ride-share),Uttara,Mirpur,23.87317,90.37629,23.80074,90.36894,10.99,28,Low,Clear,Off-Peak,1.0,210,Nagad
+DKA-1058,Rickshaw,Bashundhara R/A,Banani,23.82303,90.42514,23.79339,90.4041,3.41,26,High,Rainy,Morning Peak,1.35,160,Cash
+DKA-1059,Rickshaw,Azimpur,Gulshan,23.72682,90.38851,23.79699,90.40365,1.12,13,Gridlock,Overcast,Night,1.28,70,Cash
+DKA-1060,CNG Auto-Rickshaw,Bashundhara R/A,Mirpur,23.8229,90.4293,23.80365,90.36981,10.26,34,Low,Clear,Evening Peak,1.0,330,Cash
+DKA-1061,CNG Auto-Rickshaw,Banani,Dhanmondi,23.7911,90.40522,23.74267,90.37329,10.79,129,Gridlock,Rainy,Night,1.4,750,bKash
+DKA-1062,Rickshaw,Banani,Uttara,23.79794,90.40758,23.87715,90.38111,1.95,10,Medium,Overcast,Evening Peak,1.0,80,Cash
+DKA-1063,Bike (Ride-share),Dhanmondi,Banani,23.7417,90.37713,23.79465,90.40794,11.28,104,Gridlock,Clear,Night,1.24,380,Nagad
+DKA-1064,CNG Auto-Rickshaw,Mirpur,Farmgate,23.806,90.36798,23.75708,90.39109,9.73,73,High,Overcast,Off-Peak,1.18,470,Cash
+DKA-1065,Rickshaw,Azimpur,Gulshan,23.7353,90.38712,23.7902,90.4032,2.07,25,Gridlock,Rainy,Morning Peak,1.4,110,Cash
+DKA-1066,Bike (Ride-share),Bashundhara R/A,Motijheel,23.81838,90.42261,23.72905,90.41401,13.49,125,Gridlock,Rainy,Night,1.62,580,Cash
+DKA-1067,Rickshaw,Banani,Motijheel,23.79122,90.40086,23.73573,90.42105,2.58,31,Gridlock,Rainy,Night,1.4,130,Cash
+DKA-1068,Bike (Ride-share),Gulshan,Uttara,23.79017,90.40411,23.87378,90.38331,14.25,37,Low,Clear,Off-Peak,1.0,260,bKash
+DKA-1069,Rickshaw,Mirpur,Farmgate,23.80074,90.36768,23.75335,90.39061,2.05,7,Low,Overcast,Night,1.0,80,Cash
+DKA-1070,Bike (Ride-share),Mirpur,Farmgate,23.80765,90.36775,23.75592,90.38692,9.62,37,Medium,Rainy,Morning Peak,1.26,260,bKash
+DKA-1071,CNG Auto-Rickshaw,Mirpur,Mohakhali,23.804,90.37148,23.77527,90.39553,7.05,53,High,Overcast,Off-Peak,1.27,390,bKash
+DKA-1072,Bike (Ride-share),Bashundhara R/A,Farmgate,23.81914,90.42272,23.75873,90.38597,13.07,50,Medium,Overcast,Night,1.0,260,bKash
+DKA-1073,Bike (Ride-share),Uttara,Mohakhali,23.87134,90.38195,23.77965,90.40361,15.48,60,Medium,Rainy,Evening Peak,1.49,460,bKash
+DKA-1074,CNG Auto-Rickshaw,Banani,Bashundhara R/A,23.7897,90.4088,23.81445,90.42084,4.97,25,Medium,Clear,Evening Peak,1.0,210,bKash
+DKA-1075,CNG Auto-Rickshaw,Motijheel,Azimpur,23.73493,90.4189,23.73382,90.38892,3.98,48,Gridlock,Rainy,Morning Peak,1.5,350,bKash
+DKA-1076,Rickshaw,Azimpur,Banani,23.72765,90.38724,23.79157,90.40197,1.97,7,Low,Overcast,Night,1.0,80,Cash
+DKA-1077,Bike (Ride-share),Dhanmondi,Mirpur,23.75013,90.36966,23.80856,90.36653,8.51,79,Gridlock,Clear,Off-Peak,1.17,280,Visa/Mastercard
+DKA-1078,CNG Auto-Rickshaw,Dhanmondi,Banani,23.74719,90.37303,23.79553,90.40468,10.74,54,Medium,Clear,Evening Peak,1.0,380,bKash
+DKA-1079,CNG Auto-Rickshaw,Bashundhara R/A,Mirpur,23.82097,90.42839,23.80525,90.36648,10.07,50,Medium,Clear,Evening Peak,1.0,360,bKash
+DKA-1080,Rickshaw,Azimpur,Mirpur,23.73169,90.38464,23.8031,90.37205,3.5,42,Gridlock,Clear,Evening Peak,1.17,140,Cash
+DKA-1081,CNG Auto-Rickshaw,Mirpur,Gulshan,23.81038,90.37018,23.79024,90.40846,7.68,26,Low,Overcast,Evening Peak,1.0,270,bKash
+DKA-1082,CNG Auto-Rickshaw,Uttara,Azimpur,23.87892,90.37669,23.7272,90.38291,21.84,109,Medium,Overcast,Morning Peak,1.0,710,Cash
+DKA-1083,Bike (Ride-share),Mirpur,Bashundhara R/A,23.80093,90.36725,23.81561,90.4285,9.85,91,Gridlock,Clear,Evening Peak,1.16,320,Nagad
+DKA-1084,Bike (Ride-share),Dhanmondi,Mirpur,23.75024,90.37864,23.81027,90.36655,9.87,25,Low,Rainy,Off-Peak,1.49,290,bKash
+DKA-1085,Bike (Ride-share),Mohakhali,Farmgate,23.77626,90.40341,23.75124,90.38757,5.49,32,High,Overcast,Night,1.32,190,Nagad
+DKA-1086,Bike (Ride-share),Motijheel,Banani,23.73475,90.41711,23.7949,90.40913,9.36,36,Medium,Overcast,Night,1.0,200,Cash
+DKA-1087,Rickshaw,Mirpur,Mohakhali,23.80177,90.36405,23.77297,90.40546,1.06,5,Medium,Rainy,Off-Peak,1.34,80,Cash
+DKA-1088,CNG Auto-Rickshaw,Mohakhali,Banani,23.78094,90.40166,23.79809,90.4025,2.49,19,High,Clear,Evening Peak,1.23,180,Cash
+DKA-1089,Rickshaw,Banani,Motijheel,23.79414,90.40948,23.73159,90.41638,3.41,41,Gridlock,Clear,Morning Peak,1.3,150,Cash
+DKA-1090,CNG Auto-Rickshaw,Motijheel,Uttara,23.73789,90.42027,23.87295,90.3828,23.52,118,Medium,Overcast,Off-Peak,1.0,770,Cash
+DKA-1091,Rickshaw,Motijheel,Dhanmondi,23.73589,90.41836,23.74387,90.37904,2.26,11,Medium,Clear,Off-Peak,1.0,90,Cash
+DKA-1092,Rickshaw,Gulshan,Motijheel,23.7954,90.40518,23.73124,90.41414,1.14,14,Gridlock,Overcast,Night,1.13,70,Cash
+DKA-1093,Rickshaw,Bashundhara R/A,Motijheel,23.81943,90.42049,23.73304,90.42185,2.76,21,High,Rainy,Night,1.4,140,Cash
+DKA-1094,CNG Auto-Rickshaw,Mohakhali,Banani,23.7775,90.4046,23.78943,90.40051,2.18,11,Medium,Clear,Evening Peak,1.0,130,Cash
+DKA-1095,CNG Auto-Rickshaw,Azimpur,Farmgate,23.73242,90.38421,23.75707,90.38515,3.54,42,Gridlock,Clear,Off-Peak,1.34,290,Cash
+DKA-1096,CNG Auto-Rickshaw,Mohakhali,Bashundhara R/A,23.78148,90.39964,23.82257,90.42339,8.73,29,Low,Rainy,Evening Peak,1.33,390,bKash
+DKA-1097,CNG Auto-Rickshaw,Dhanmondi,Bashundhara R/A,23.74177,90.37752,23.81523,90.42037,15.66,117,High,Clear,Morning Peak,1.27,770,bKash
+DKA-1098,Rickshaw,Mohakhali,Motijheel,23.78134,90.40491,23.73223,90.42156,3.41,26,High,Rainy,Night,1.4,160,Cash
+DKA-1099,Rickshaw,Uttara,Banani,23.8744,90.38006,23.78985,90.40249,2.98,10,Low,Overcast,Morning Peak,1.0,100,Cash
+DKA-1100,Rickshaw,Dhanmondi,Mirpur,23.74813,90.37229,23.804,90.36366,2.33,28,Gridlock,Clear,Morning Peak,1.14,100,Cash

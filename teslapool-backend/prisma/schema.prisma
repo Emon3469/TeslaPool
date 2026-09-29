@@ -2,7 +2,7 @@
 //
 // Money is ALWAYS integer poysha (1 BDT = 100 poysha). Ratios are integer basis points.
 // Constraints Prisma cannot express (CHECKs, partial unique indexes, immutability
-// triggers) live in prisma/migrations/*/migration.sql and are documented in docs/database.md.
+// triggers) live in prisma/migrations/*/migration.sql and are explained in docs/TeslaPool-Technical-Overview.pdf.
 
 generator client {
   provider      = "prisma-client-js"

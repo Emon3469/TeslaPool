@@ -1,0 +1,108 @@
+name: teslapool
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: teslapool-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-teslapool}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-teslapool_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-teslapool}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-teslapool} -d ${POSTGRES_DB:-teslapool}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - teslapool-network
+
+  ml:
+    build:
+      context: ./teslapool-backend/ml
+      dockerfile: Dockerfile
+    container_name: teslapool-ml
+    restart: unless-stopped
+    environment:
+      PORT: "8000"
+    ports:
+      - "127.0.0.1:${ML_HOST_PORT:-8000}:8000"
+    networks:
+      teslapool-network:
+        aliases:
+          - ml
+    # ML is optional; backend falls back gracefully if ML is degraded
+
+  backend:
+    build:
+      context: ./teslapool-backend
+      dockerfile: Dockerfile
+    container_name: teslapool-backend
+    restart: unless-stopped
+    init: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${POSTGRES_USER:-teslapool}:${POSTGRES_PASSWORD:-teslapool_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-teslapool}
+      JWT_SECRET: ${JWT_SECRET:-please_change_this_to_a_random_32_character_secret_key!}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      TRUST_PROXY: ${TRUST_PROXY:-1}
+      AUTH_COOKIE_SAMESITE: ${AUTH_COOKIE_SAMESITE:-lax}
+      RUN_MIGRATIONS: "true"
+      SEED_ON_START: ${SEED_ON_START:-true}
+      SEED_PASSENGER_PASSWORD: ${SEED_PASSENGER_PASSWORD:-Passenger@2026}
+      SEED_DRIVER_PASSWORD: ${SEED_DRIVER_PASSWORD:-Driver@2026}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Admin@2026}
+      ML_SIDECAR_URL: http://ml:8000
+      EMAIL_VERIFICATION: ${EMAIL_VERIFICATION:-off}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL:-}
+      BREVO_SENDER_NAME: ${BREVO_SENDER_NAME:-TeslaPool}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${API_HOST_PORT:-4000}:3000"
+    networks:
+      teslapool-network:
+        aliases:
+          - backend
+          - api
+
+  frontend:
+    build:
+      context: ./teslapool-frontend
+      dockerfile: Dockerfile
+      args:
+        BACKEND_URL: http://backend:3000
+    container_name: teslapool-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy   # the API has migrated and answers /health/ready
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      BACKEND_URL: http://backend:3000
+    ports:
+      - "${WEB_HOST_PORT:-3000}:3000"
+    networks:
+      - teslapool-network
+
+volumes:
+  pgdata:
+    name: teslapool_pgdata
+
+networks:
+  teslapool-network:
+    name: teslapool_network

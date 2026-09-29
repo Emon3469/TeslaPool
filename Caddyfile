@@ -1,0 +1,28 @@
+# Caddy configuration for automatic HTTPS and reverse proxying
+# Replace your-domain.com with your actual registered domain pointing to your VPS IP
+
+{$DOMAIN:localhost} {
+    # Compress responses (gzip, zstd)
+    encode zstd gzip
+
+    # Forward all standard requests to the Next.js frontend
+    # Next.js will automatically proxy /api/v1/* to http://backend:3000
+    reverse_proxy frontend:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# Optional direct API subdomain: api.your-domain.com
+# Uncomment and configure if you want external systems / mobile apps to call the API directly
+# {$API_DOMAIN:api.localhost} {
+#     encode zstd gzip
+#     reverse_proxy backend:3000 {
+#         header_up Host {host}
+#         header_up X-Real-IP {remote_host}
+#         header_up X-Forwarded-For {remote_host}
+#         header_up X-Forwarded-Proto {scheme}
+#     }
+# }

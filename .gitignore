@@ -21,3 +21,11 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .venv/
+
+# Test output
+teslapool-frontend/playwright-report/
+teslapool-frontend/test-results/
+teslapool-backend/tests/.tmp-config-cwd/
+
+# Unused design images kept locally (not part of the app)
+design-assets/

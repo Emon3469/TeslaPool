@@ -1,0 +1,96 @@
+# Render Blueprint: TeslaPool API + PostgreSQL. The web app is deployed separately on Vercel.
+# Spec: https://render.com/docs/blueprint-spec
+#
+# Dashboard → New → Blueprint → pick this repository → fill in the prompted values → Apply.
+# Full walkthrough and the order to deploy things in: docs/DEPLOYMENT_GUIDE.md
+#
+# Every value below is a quoted string on purpose: YAML turns unquoted off/on/yes/no/true/false into
+# booleans, which would reach the app as "false" instead of the intended value.
+
+databases:
+  - name: teslapool-db
+    plan: free                # free Postgres expires 30 days after creation; use basic-256mb to keep data
+    region: singapore         # closest Render region to Dhaka; must match the API's region
+    databaseName: teslapool
+    user: teslapool
+    ipAllowList: []           # no public access: only services in this Render account/region can connect
+
+services:
+  - type: web
+    name: teslapool-backend   # public URL: https://teslapool-backend.onrender.com (Render adds a suffix if taken)
+    runtime: docker
+    plan: free                # free instances sleep after 15 min idle; the first request then takes ~1 min
+    region: singapore
+    rootDir: teslapool-backend       # only changes inside this folder trigger a deploy
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/ready   # 200 once the database answers; migrations run before the server listens
+    autoDeploy: true
+    envVars:
+      # ── Runtime ────────────────────────────────────────────────────────────────
+      - key: NODE_ENV
+        value: "production"
+      - key: LOG_LEVEL
+        value: "info"
+      # Do not set PORT: Render injects it and the API binds 0.0.0.0:$PORT.
+
+      # ── Database & secrets ─────────────────────────────────────────────────────
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teslapool-db
+          property: connectionString   # the internal URL (private network, no TLS setup needed)
+      - key: JWT_SECRET
+        generateValue: true            # 256-bit random value generated once by Render
+
+      # ── Browser access (the Vercel web app proxies /api/v1 to this service) ────
+      - key: CORS_ORIGINS
+        sync: false   # your Vercel URL(s), comma-separated, e.g. https://teslapool.vercel.app  (required: writes are Origin-checked)
+      - key: APP_URL
+        sync: false   # your Vercel URL, used in email links, e.g. https://teslapool.vercel.app
+      - key: TRUST_PROXY
+        value: "2"    # Vercel's proxy + Render's load balancer, so rate limits see the real client IP
+      - key: AUTH_COOKIE_SAMESITE
+        value: "lax"  # the cookie is first-party on the Vercel domain (set through the proxy)
+
+      # ── Start-up ───────────────────────────────────────────────────────────────
+      - key: RUN_MIGRATIONS
+        value: "true"   # prisma migrate deploy on every start (idempotent, retried while the DB boots)
+      - key: SEED_ON_START
+        value: "true"   # demo cast for reviewers; re-applies the demo passwords below on every start
+      - key: SEED_PASSENGER_PASSWORD
+        value: "Passenger@2026"
+      - key: SEED_DRIVER_PASSWORD
+        value: "Driver@2026"
+      - key: SEED_ADMIN_PASSWORD
+        value: "Admin@2026"
+
+      # ── Email verification codes (Brevo) ───────────────────────────────────────
+      # With both Brevo values set, sign-ups must confirm a 6-digit emailed code. Left empty, the API still
+      # starts and runs with verification OFF (a warning is logged), so a missing key never breaks a deploy.
+      - key: EMAIL_VERIFICATION
+        value: "required"
+      - key: BREVO_API_KEY
+        sync: false   # Brevo → SMTP & API → API keys (xkeysib-…)
+      - key: BREVO_SENDER_EMAIL
+        sync: false   # a sender verified in Brevo (Senders, domains & dedicated IPs)
+      - key: BREVO_SENDER_NAME
+        value: "TeslaPool"
+
+      # ── Optional ML sidecar ────────────────────────────────────────────────────
+      # Pricing is deterministic by default; without ML the API uses its rule-based ETA and fare.
+      # To add it, uncomment the teslapool-ml service below and set this to its public URL.
+      # - key: ML_SIDECAR_URL
+      #   value: "https://teslapool-ml.onrender.com"
+
+  # Optional: ML inference sidecar (FastAPI). Free instances sleep, so the API times out after 1.5 s and
+  # falls back to deterministic estimates until it wakes; nothing breaks either way.
+  # - type: web
+  #   name: teslapool-ml
+  #   runtime: docker
+  #   plan: free
+  #   region: singapore
+  #   rootDir: teslapool-backend/ml
+  #   dockerfilePath: ./Dockerfile
+  #   dockerContext: .
+  #   healthCheckPath: /health
+  #   autoDeploy: true

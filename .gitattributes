@@ -1,0 +1,10 @@
+# Store text files with LF line endings. Shell scripts MUST be LF or they fail on Linux
+# (Docker/Render) with errors like "set: Illegal option -" or "\r: not found".
+* text=auto eol=lf
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.pkl binary
+*.joblib binary

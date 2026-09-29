@@ -1,0 +1,23 @@
+# Secrets: never commit real environment files (each app ships a .env.example).
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local tooling (npm cache on D:, editor/agent settings, logs)
+.npm-cache/
+.claude/
+.npmrc
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/

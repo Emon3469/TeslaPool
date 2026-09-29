@@ -7,7 +7,7 @@
  *
  * Seeds accounts, Bullet, TeslaPay balances (as ledger top-ups, so balance == sum of ledger) and,
  * on the first run only, puts Jashim online (an OPEN pool) so the story can start immediately.
- * Rides are created through the API during the demo (docs/demo.md), never pre-baked.
+ * Rides are created through the API during the demo (README walkthrough), never pre-baked.
  *
  * Demo credentials, one per role (README "Demo accounts"): SEED_PASSENGER_PASSWORD, SEED_DRIVER_PASSWORD and
  * SEED_ADMIN_PASSWORD, else SEED_PASSWORD, else the documented defaults. Every run re-applies them to the

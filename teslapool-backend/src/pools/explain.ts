@@ -32,7 +32,7 @@ export function describeCheck(rule: HardRule, passed: boolean, code: MatchReason
       if (n(d.existingPassengers) === 0) return 'First passenger: any destination works';
       const hops = n(d.maxHopsToExistingDropoffs);
       if (passed) return hops === 0 ? 'Same destination zone as current passengers' : `Destination within ${hops} zone${hops === 1 ? '' : 's'} of current passengers`;
-      return `Destination is ${hops} zones from current passengers' (limit ${n(d.limitHops)})`;
+      return `Destination is ${hops} zones from current passengers (limit ${n(d.limitHops)})`;
     }
     case 'STOP_LIMIT':
       return passed

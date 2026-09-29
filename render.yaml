@@ -2,7 +2,7 @@
 # Spec: https://render.com/docs/blueprint-spec
 #
 # Dashboard → New → Blueprint → pick this repository → fill in the prompted values → Apply.
-# Full walkthrough and the order to deploy things in: docs/DEPLOYMENT_GUIDE.md
+# Step-by-step (Render first, then Vercel): README.md, section "Deploy (Render + Vercel)".
 #
 # Every value below is a quoted string on purpose: YAML turns unquoted off/on/yes/no/true/false into
 # booleans, which would reach the app as "false" instead of the intended value.

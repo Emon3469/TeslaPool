@@ -1,0 +1,50 @@
+# Production Compose Overlay for VPS deployment
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+services:
+  # In production, do not expose raw database port to the public internet
+  postgres:
+    ports: !reset []
+
+  # Do not expose internal ML sidecar port to the public internet
+  ml:
+    ports: !reset []
+
+  # Do not expose raw backend port to public; Caddy handles traffic
+  backend:
+    ports: !reset []
+    environment:
+      NODE_ENV: production
+      SEED_ON_START: ${SEED_ON_START:-false}
+      TRUST_PROXY: "2"   # Caddy -> Next.js -> API: two proxies in front of the backend
+      LOG_LEVEL: info
+
+  # Do not expose raw frontend port to public; Caddy handles traffic
+  frontend:
+    ports: !reset []
+    environment:
+      NODE_ENV: production
+
+  # Production Reverse Proxy with automated Let's Encrypt SSL
+  caddy:
+    image: caddy:2-alpine
+    container_name: teslapool-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - teslapool-network
+
+volumes:
+  caddy_data:
+    name: teslapool_caddy_data
+  caddy_config:
+    name: teslapool_caddy_config

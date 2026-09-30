@@ -1,6 +1,6 @@
 {
   "name": "teslapool-backend",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "TeslaPool: transaction-safe, explainable ride-pooling engine for Dhaka (Express + PostgreSQL + ML advisor)",
   "main": "dist/src/main.js",

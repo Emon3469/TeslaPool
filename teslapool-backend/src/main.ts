@@ -15,6 +15,14 @@ async function main(): Promise<void> {
 
   await new Promise<void>((resolve) => server.listen(config.port, config.host, resolve));
   logger.info('server.started', { event: 'SERVER_STARTED', host: config.host, port: config.port, env: config.env, mlSidecar: config.ml.sidecarUrl ?? 'disabled' });
+  // A production API that only trusts localhost refuses every write from the real web app (403 CSRF_ORIGIN_REJECTED).
+  if (config.env === 'production' && config.corsOrigins.every((o) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o))) {
+    logger.error('config.cors_origins_localhost_only', {
+      event: 'CONFIG_WARNING',
+      corsOrigins: config.corsOrigins,
+      fix: 'Set CORS_ORIGINS to the web app URL, e.g. https://teslapool.vercel.app',
+    });
+  }
 
   let shuttingDown = false;
   const shutdown = (signal: string) => {

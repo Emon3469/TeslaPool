@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { ButtonLink } from '@/components/ui/Button';
 import { ErrorState, LoadingBlock } from '@/components/ui/States';
 import { MailWarning } from 'lucide-react';
-import { homeFor, useMe, useMeta } from '@/lib/hooks';
+import { homeFor, useMe, useMeta, useSessionChange } from '@/lib/hooks';
 import type { Role, User } from '@/lib/types';
 
 const TABS: Record<Role, { href: string; label: string }[]> = {
@@ -59,7 +59,11 @@ export function AppPage({
   wide?: boolean;
   children: (user: User) => React.ReactNode;
 }) {
-  const { user, isLoading, error, mutate } = useMe();
+  const { user: sessionUser, isLoading, error, mutate, sessionChanged } = useMe();
+  // Another tab switched the account: render nothing for it (SessionGate explains and lets the person choose).
+  const changed = useSessionChange();
+  const paused = sessionChanged || changed !== null;
+  const user = paused ? null : sessionUser;
   const { data: meta } = useMeta();
   const mode = meta?.auth?.emailVerification ?? 'off';
   const router = useRouter();
@@ -67,11 +71,12 @@ export function AppPage({
   const needsVerification = Boolean(user && !user.emailVerified && mode !== 'off' && pathname !== '/verify-email');
 
   useEffect(() => {
-    if (!isLoading && !error && !user) router.replace(`/login?reason=expired&next=${encodeURIComponent(pathname)}`);
-  }, [isLoading, error, user, router, pathname]);
+    if (!paused && !isLoading && !error && !user) router.replace(`/login?reason=expired&next=${encodeURIComponent(pathname)}`);
+  }, [paused, isLoading, error, user, router, pathname]);
 
   let body: React.ReactNode;
-  if (error && !user) body = <ErrorState error={error} onRetry={() => mutate()} title="Could not load your account" />;
+  if (paused) body = <LoadingBlock label="This tab is paused" />;
+  else if (error && !user) body = <ErrorState error={error} onRetry={() => mutate()} title="Could not load your account" />;
   // A server-prefetched user counts as loaded (SWR keeps isLoading true while it refreshes in the background).
   else if (!user) body = <LoadingBlock label="Loading your account" />;
   else if (roles && !roles.includes(user.role))

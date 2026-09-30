@@ -183,6 +183,7 @@ describe('4. HttpOnly cookie sessions with CSRF protection', () => {
     expect(noOrigin.body.error.code).toBe('CSRF_ORIGIN_REJECTED');
     const evil = await request(h.app).post('/api/v1/rides').set('Cookie', cookie).set('Origin', 'https://evil.example').send(body);
     expect(evil.body.error.code).toBe('CSRF_ORIGIN_REJECTED');
+    expect(evil.body.error.details).toEqual({ origin: 'https://evil.example' });
     const good = await request(h.app).post('/api/v1/rides').set('Cookie', cookie).set('Origin', 'http://localhost:3000').send(body);
     expect(good.status).toBe(201);
     expect(good.headers['access-control-allow-credentials']).toBe('true');

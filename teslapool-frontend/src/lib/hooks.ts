@@ -1,11 +1,16 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import useSWR from 'swr';
 import { api, ApiError } from './api';
+import { announceSignOut, getSessionChange, observeSessionUser, subscribeSessionChange, type SessionChange } from './session-guard';
 import type { Meta, User } from './types';
 
-/** The signed-in user, or null when there is no valid session (401 is not an error here). */
+/**
+ * The signed-in user, or null when there is no valid session (401 is not an error here).
+ * `sessionChanged` is true when the browser is now signed in as a different account than the one
+ * this tab loaded with (another tab signed in); pages must not render that account's data.
+ */
 export function useMe() {
   const { data, error, isLoading, mutate } = useSWR<User | null>(
     '/auth/me',
@@ -19,7 +24,13 @@ export function useMe() {
     },
     { revalidateOnFocus: false, shouldRetryOnError: false, dedupingInterval: 30_000 },
   );
-  return { user: data ?? null, isLoading, error, mutate };
+  const sessionChanged = !observeSessionUser(data);
+  return { user: data ?? null, isLoading, error, mutate, sessionChanged };
+}
+
+/** Non-null once this tab's account was replaced by a sign-in or sign-out in another tab. */
+export function useSessionChange(): SessionChange | null {
+  return useSyncExternalStore(subscribeSessionChange, getSessionChange, () => null);
 }
 
 /** Zones, rates, rules and enums. Static per deployment, so cache it for the session. */
@@ -37,6 +48,7 @@ export function useLogout() {
     try {
       await api.post('/auth/logout');
     } finally {
+      announceSignOut();
       window.location.replace('/login?loggedOut=1');
     }
   }, []);

@@ -43,10 +43,12 @@ services:
         generateValue: true            # 256-bit random value generated once by Render
 
       # ── Browser access (the Vercel web app proxies /api/v1 to this service) ────
+      # Required: every cookie-authenticated write (book a ride, join, open a pool, top up) is Origin-checked
+      # against this list. Add more origins comma-separated (custom domain, preview URLs).
       - key: CORS_ORIGINS
-        sync: false   # your Vercel URL(s), comma-separated, e.g. https://teslapool.vercel.app  (required: writes are Origin-checked)
+        value: "https://teslapool.vercel.app"
       - key: APP_URL
-        sync: false   # your Vercel URL, used in email links, e.g. https://teslapool.vercel.app
+        value: "https://teslapool.vercel.app"   # used in email links
       - key: TRUST_PROXY
         value: "2"    # Vercel's proxy + Render's load balancer, so rate limits see the real client IP
       - key: AUTH_COOKIE_SAMESITE

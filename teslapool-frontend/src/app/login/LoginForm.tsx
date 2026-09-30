@@ -11,6 +11,7 @@ import { ErrorState } from '@/components/ui/States';
 import { api, ApiError } from '@/lib/api';
 import { homeFor, useLogout, useMe } from '@/lib/hooks';
 import { goAfterAuth, safeNext } from '@/lib/navigation';
+import { adoptSessionAccount } from '@/lib/session-guard';
 import type { User } from '@/lib/types';
 
 import { DEMO_ACCOUNTS } from '@/content/demo';
@@ -33,6 +34,8 @@ export function LoginForm() {
     setLoading(true);
     try {
       const res = await api.post<{ user: User }>('/auth/login', { email: email.trim(), password });
+      // Claim this tab for the new account and tell the other tabs (they pause instead of silently switching).
+      adoptSessionAccount(res.user);
       // Clear anything cached for a previous user, then seed the session.
       await mutate(() => true, undefined, { revalidate: false });
       await mutate('/auth/me', res.user, { revalidate: false });
@@ -58,7 +61,8 @@ export function LoginForm() {
       {current && !expired && (
         <div role="status" className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-mint px-4 py-3 text-sm">
           <span>
-            You’re signed in as <span className="font-bold">{current.name}</span>.
+            You’re signed in as <span className="font-bold">{current.name}</span>. Logging in as someone else signs {current.name.split(' ')[0]} out of every tab in this
+            browser. To use two accounts side by side, open one in an Incognito window or another browser profile.
           </span>
           <span className="flex gap-2">
             <Link href={homeFor(current)} className="font-bold underline-offset-2 hover:underline">

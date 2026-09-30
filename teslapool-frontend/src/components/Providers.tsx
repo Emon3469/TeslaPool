@@ -2,6 +2,7 @@
 
 import { mutate, SWRConfig } from 'swr';
 import { api, ApiError } from '@/lib/api';
+import { SessionGate } from './app/SessionGate';
 import { ToastProvider } from './ui/Toast';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -18,7 +19,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
       }}
     >
-      <ToastProvider>{children}</ToastProvider>
+      <ToastProvider>
+        <SessionGate>{children}</SessionGate>
+      </ToastProvider>
     </SWRConfig>
   );
 }

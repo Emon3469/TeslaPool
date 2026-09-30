@@ -29,6 +29,9 @@ let tabAccount: Account | null = null;
 let change: SessionChange | null = null;
 const listeners = new Set<() => void>();
 
+// Server rendering shares this module across every visitor, so the guard only ever runs in a browser tab.
+const inBrowser = () => typeof window !== 'undefined';
+
 const pick = (u: Account): Account => ({ id: u.id, name: u.name, role: u.role });
 
 function notify() {
@@ -37,7 +40,7 @@ function notify() {
 }
 
 function flag(current: Account | null | undefined) {
-  if (!tabAccount) return;
+  if (!inBrowser() || !tabAccount) return;
   if (change) {
     if (current !== undefined && change.current === undefined) {
       change = { ...change, current };
@@ -67,7 +70,7 @@ export function subscribeSessionChange(listener: () => void): () => void {
  * answer for someone else pauses it. Returns false when the user is not this tab's account.
  */
 export function observeSessionUser(user: Account | null | undefined): boolean {
-  if (!user) return true; // Signed out: the usual "session ended" flow handles it.
+  if (!inBrowser() || !user) return true; // Signed out: the usual "session ended" flow handles it.
   if (!tabAccount) {
     tabAccount = pick(user);
     return true;
@@ -79,6 +82,7 @@ export function observeSessionUser(user: Account | null | undefined): boolean {
 
 /** This tab is about to become `user` (it just signed in or signed up): claim it and tell the other tabs. */
 export function adoptSessionAccount(user: Account): void {
+  if (!inBrowser()) return;
   tabAccount = pick(user);
   change = null;
   broadcast({ type: 'signed-in', account: tabAccount });
@@ -97,7 +101,7 @@ export function reportSessionMismatch(): void {
 /** Headers the API client adds so the API can refuse requests made for another account. */
 export function sessionHeaders(path: string): Record<string, string> {
   // /auth/* must always answer for whoever is signed in now (that is how the change is discovered).
-  if (!tabAccount || path.startsWith('/auth/')) return {};
+  if (!inBrowser() || !tabAccount || path.startsWith('/auth/')) return {};
   return { [EXPECTED_USER_HEADER]: tabAccount.id };
 }
 

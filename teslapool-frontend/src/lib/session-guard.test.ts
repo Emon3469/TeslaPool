@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   adoptSessionAccount,
   getSessionChange,
@@ -12,7 +12,10 @@ import {
 const nusrat = { id: 'u-nusrat', name: 'Nusrat Jahan', role: 'PASSENGER' as const };
 const jashim = { id: 'u-jashim', name: 'Jashim Uddin', role: 'DRIVER' as const };
 
-afterEach(() => resetSessionGuard());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  resetSessionGuard();
+});
 
 describe('session guard (one account per tab)', () => {
   it('the first signed-in user claims the tab; the same user keeps it', () => {
@@ -56,5 +59,14 @@ describe('session guard (one account per tab)', () => {
     observeSessionUser(nusrat);
     expect(observeSessionUser(null)).toBe(true);
     expect(getSessionChange()).toBeNull();
+  });
+
+  it('does nothing during server rendering, where one module instance serves every visitor', () => {
+    vi.stubGlobal('window', undefined);
+    expect(observeSessionUser(nusrat)).toBe(true);
+    expect(observeSessionUser(jashim)).toBe(true);
+    expect(getTabAccount()).toBeNull();
+    expect(getSessionChange()).toBeNull();
+    expect(sessionHeaders('/rides')).toEqual({});
   });
 });

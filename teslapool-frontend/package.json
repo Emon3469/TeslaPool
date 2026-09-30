@@ -1,6 +1,6 @@
 {
   "name": "teslapool-frontend",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "TeslaPool web app: marketing site, passenger app and driver app (Next.js App Router)",
   "scripts": {

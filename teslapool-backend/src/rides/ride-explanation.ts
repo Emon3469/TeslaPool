@@ -131,6 +131,8 @@ export class RideExplanationService {
       const others = x.trip.coPassengers.map((p) => p.firstName);
       lines.push(others.length ? `Sharing with ${others.join(', ')}` : 'Riding alone in this pool so far');
       lines.push(`Route: ${routeLabel(x.trip.route)}`);
+      if (x.trip.yourFlexibility === 'URGENT') lines.push(`Urgent ride: the route goes your way first (${x.trip.yourDetourKm} km extra for you)`);
+      else if (x.trip.yourFlexibility === 'FLEXIBLE') lines.push(`Flexible ride: you accepted a longer route so others could share (${x.trip.yourDetourKm} km extra for you)`);
     } else if (x.rejections.length) {
       lines.push(x.rejections[x.rejections.length - 1].headline);
     } else {
@@ -160,6 +162,7 @@ export class RideExplanationService {
       yourPickup: { zone: ride.pickupZone, name: place(ride.pickupZone), stopNumber: m.pickupSequence + 1 },
       yourDropoff: { zone: ride.dropoffZone, name: place(ride.dropoffZone), stopNumber: m.dropoffSequence + 1 },
       yourDetourKm: m.detourKm,
+      yourFlexibility: ride.flexibility,
       coPassengers: pool.memberships
         .filter((o) => o.rideRequestId !== ride.id)
         .map((o) => ({ firstName: o.passenger.name.split(' ')[0], seats: o.seats, pickup: place(o.rideRequest.pickupZone), dropoff: place(o.rideRequest.dropoffZone) })),

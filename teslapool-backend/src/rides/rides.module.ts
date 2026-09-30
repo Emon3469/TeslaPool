@@ -47,6 +47,9 @@ const buildCreateRideBody = (maxSeats: number) =>
       dropoffLng: lng.optional(),
       requestedSeats: z.number().int().min(1).max(maxSeats).default(1),
       vehicleType: z.enum(VEHICLE_TYPES).optional().openapi({ description: 'Vehicle class to quote and match against; defaults to AUTO_RICKSHAW (a "Tesla").' }),
+      flexibility: z.enum(['URGENT', 'STANDARD', 'FLEXIBLE']).default('STANDARD').openapi({
+        description: 'How much detour you accept. URGENT: almost direct (the route goes your way first; fewer pools fit). STANDARD: the default limit. FLEXIBLE: you accept a longer ride so more people can share (more pools fit). Your choice only sets your own limit; everyone else keeps theirs.',
+      }),
       paymentMethod: z.enum(['CASH', 'TESLAPAY']).default('CASH').openapi({ description: 'CASH (collected by the driver) or TESLAPAY (simulated wallet; balance must cover the quoted solo fare).' }),
       context: z
         .object({ traffic: z.enum(TRAFFIC_LEVELS).optional(), weather: z.enum(WEATHER).optional(), timeOfDay: z.enum(TIMES_OF_DAY).optional() })
@@ -86,6 +89,7 @@ export const RideDto = registry.register(
       .nullable()
       .openapi({ description: 'Itemised standard fare frozen at request time: base + distance + time = total (hand-verifiable)' }),
     paymentMethod: z.enum(['CASH', 'TESLAPAY']),
+    flexibility: z.enum(['URGENT', 'STANDARD', 'FLEXIBLE']),
     payment: z.object({ method: z.enum(['CASH', 'TESLAPAY']), amount: Money, settledAt: z.string().datetime() }).nullable(),
     pool: z
       .object({ poolId: z.string().uuid(), membershipStatus: z.string(), fare: Money, soloFare: Money, discountPercent: z.number(), pickupSequence: z.number().int(), dropoffSequence: z.number().int(), detourKm: z.number() })
@@ -145,6 +149,7 @@ export function toRideDto(ride: RideWithMemberships): z.infer<typeof RideDto> {
             trafficLevel: ride.trafficLevel ?? 'UNKNOWN',
           },
     paymentMethod: ride.paymentMethod,
+    flexibility: ride.flexibility,
     payment: ride.payment ? { method: ride.payment.method, amount: money(ride.payment.amountPoysha), settledAt: ride.payment.settledAt.toISOString() } : null,
     pool: m && {
       poolId: m.poolId,

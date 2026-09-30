@@ -12,7 +12,7 @@ import { Button, ButtonLink } from '@/components/ui/Button';
 import { EmptyState, ErrorState, LoadingBlock } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
 import { api, errorMessage, newIdempotencyKey } from '@/lib/api';
-import { formatWait, money, RIDE_STATUS_LABEL, VEHICLE_LABEL, zoneName } from '@/lib/format';
+import { FLEXIBILITY_LABEL, formatWait, money, RIDE_STATUS_LABEL, VEHICLE_LABEL, zoneName } from '@/lib/format';
 import { useMeta } from '@/lib/hooks';
 import { nextDriverAction } from '@/lib/ride';
 import type { CompatibleRequest, DriverStatus, MatchDecision, Pool, RideStatus, User } from '@/lib/types';
@@ -30,6 +30,14 @@ function Dashboard({ user }: { user: User }) {
   if (error) return <ErrorState error={error} onRetry={() => mutate()} />;
   if (!data) return <LoadingBlock label="Loading your status" rows={3} />;
   return data.online && data.pool ? <OnlinePanel status={data} pool={data.pool} refresh={() => mutate()} /> : <OfflinePanel status={data} user={user} refresh={() => mutate()} />;
+}
+
+function FlexBadge({ value }: { value: string }) {
+  return (
+    <span className={clsx('ml-1.5 inline-flex rounded-full px-2 py-0.5 align-middle text-[10px] font-black uppercase tracking-wider', value === 'URGENT' ? 'bg-red-600 text-white' : 'bg-mint text-dark')}>
+      {FLEXIBILITY_LABEL[value]?.label ?? value}
+    </span>
+  );
 }
 
 function OfflinePanel({ status, user, refresh }: { status: DriverStatus; user: User; refresh: () => Promise<unknown> }) {
@@ -246,6 +254,7 @@ function OnlinePanel({ status, pool, refresh }: { status: DriverStatus; pool: Po
                       <div className="min-w-0 flex-1">
                         <p className="font-bold">
                           {p.firstName} <span className="font-normal text-muted">· {p.seats} seat{p.seats > 1 ? 's' : ''}</span>
+                          {p.flexibility !== 'STANDARD' && <FlexBadge value={p.flexibility} />}
                         </p>
                         <p className="text-xs text-muted">
                           stop {p.pickupSequence + 1} {p.pickupZone} → stop {p.dropoffSequence + 1} {p.dropoffZone} · {money(p.fare)}
@@ -299,7 +308,8 @@ function OnlinePanel({ status, pool, refresh }: { status: DriverStatus; pool: Po
                     zones={zones}
                     title={
                       <span className="flex items-center gap-2 normal-case tracking-normal">
-                        <span className="text-dark">{r.passengerFirstName}</span> · {r.requestedSeats} seat{r.requestedSeats > 1 ? 's' : ''} · {zoneName(r.pickupZone, zones)} → {zoneName(r.dropoffZone, zones)}
+                        <span className="text-dark">{r.passengerFirstName}</span>
+                        {r.flexibility !== 'STANDARD' && <FlexBadge value={r.flexibility} />} · {r.requestedSeats} seat{r.requestedSeats > 1 ? 's' : ''} · {zoneName(r.pickupZone, zones)} → {zoneName(r.dropoffZone, zones)}
                         <span className="inline-flex items-center gap-1">
                           <Clock className="h-3 w-3" aria-hidden="true" /> {formatWait(r.waitingSeconds)}
                         </span>

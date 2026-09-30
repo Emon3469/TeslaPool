@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { ArrowLeftRight, Banknote, Clock, LocateFixed, MapPin, Minus, Plus, Route as RouteIcon, Wallet, X } from 'lucide-react';
+import { ArrowLeftRight, Banknote, Clock, Gauge, LocateFixed, MapPin, Minus, Plus, Route as RouteIcon, Users, Wallet, X, Zap } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -14,11 +14,11 @@ import { ErrorState, LoadingBlock } from '@/components/ui/States';
 import { api, ApiError, apiRequest, newIdempotencyKey } from '@/lib/api';
 import { resolveContext } from '@/lib/context';
 import { zoneDistanceKm } from '@/lib/fare';
-import { formatBdt, titleCase, zoneName } from '@/lib/format';
+import { FLEXIBILITY_LABEL, formatBdt, titleCase, zoneName } from '@/lib/format';
 import { formatLatLng, inDhaka, nearestZone, roundCoord, type LatLng } from '@/lib/geo';
 import { useMeta } from '@/lib/hooks';
 import { saveCreatedRide } from '@/lib/quote-cache';
-import type { CreatedRide, FarePrediction, Meta, PaymentMethod, Ride, Wallet as WalletT } from '@/lib/types';
+import type { CreatedRide, FarePrediction, Flexibility, Meta, PaymentMethod, Ride, Wallet as WalletT } from '@/lib/types';
 
 type Ctx = { traffic?: string; weather?: string; timeOfDay?: string };
 type End = 'pickup' | 'dropoff';
@@ -87,6 +87,7 @@ function RideForm({ meta }: { meta: Meta }) {
   const [vehicleType, setVehicleType] = useState(meta.vehicleTypes[0]?.code ?? 'AUTO_RICKSHAW');
   const [seats, setSeats] = useState(1);
   const [payment, setPayment] = useState<PaymentMethod>('CASH');
+  const [flexibility, setFlexibility] = useState<Flexibility>('STANDARD');
   const [ctx, setCtx] = useState<Ctx>({});
   const [loading, setLoading] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -171,6 +172,7 @@ function RideForm({ meta }: { meta: Meta }) {
           requestedSeats: seats,
           vehicleType,
           paymentMethod: payment,
+          flexibility,
           ...(points.pickup ? { pickupLat: points.pickup.lat, pickupLng: points.pickup.lng } : {}),
           ...(points.dropoff ? { dropoffLat: points.dropoff.lat, dropoffLng: points.dropoff.lng } : {}),
           ...(Object.keys(context).length ? { context } : {}),
@@ -343,6 +345,36 @@ function RideForm({ meta }: { meta: Meta }) {
               </button>
             </div>
           </div>
+
+          <fieldset>
+            <legend className="label">How urgent is this trip?</legend>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ['URGENT', Zap],
+                  ['STANDARD', Gauge],
+                  ['FLEXIBLE', Users],
+                ] as const
+              ).map(([value, Icon]) => (
+                <label
+                  key={value}
+                  className={clsx(
+                    'flex cursor-pointer flex-col gap-1 rounded-2xl border-2 p-3 transition has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-brand/60',
+                    flexibility === value ? 'border-dark bg-brand' : 'border-dark/10 hover:border-dark/30',
+                  )}
+                >
+                  <input type="radio" name="flexibility" className="sr-only" checked={flexibility === value} onChange={() => { changed(); setFlexibility(value); }} />
+                  <span className="flex items-center gap-1.5 text-sm font-bold">
+                    <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" /> {FLEXIBILITY_LABEL[value].label}
+                  </span>
+                  <span className="text-[11px] leading-tight text-dark/60">{FLEXIBILITY_LABEL[value].hint}</span>
+                </label>
+              ))}
+            </div>
+            {flexibility === 'URGENT' && (
+              <p className="mt-2 text-xs text-muted">The car goes your way first. Riders who would lengthen your trip aren’t added, so you may ride alone.</p>
+            )}
+          </fieldset>
 
           <fieldset>
             <legend className="label">Payment</legend>

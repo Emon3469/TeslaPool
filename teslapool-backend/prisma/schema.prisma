@@ -75,6 +75,12 @@ enum PaymentMethod {
   TESLAPAY
 }
 
+enum RideFlexibility {
+  URGENT
+  STANDARD
+  FLEXIBLE
+}
+
 enum WalletTransactionType {
   TOP_UP
   RIDE_PAYMENT
@@ -163,6 +169,8 @@ model RideRequest {
   distanceChargePoysha Int?          @map("distance_charge_poysha")
   timeChargePoysha     Int?          @map("time_charge_poysha")
   paymentMethod        PaymentMethod @default(CASH) @map("payment_method")
+  /// How much detour this rider accepts: URGENT (almost direct), STANDARD, FLEXIBLE.
+  flexibility          RideFlexibility @default(STANDARD)
   /// Set when the ride completes: the pooled fare actually charged.
   finalFarePoysha      Int?          @map("final_fare_poysha")
   status               RideStatus    @default(REQUESTED)

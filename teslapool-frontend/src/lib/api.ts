@@ -7,6 +7,8 @@
  * and request id, which the UI shows so any error can be traced in the server logs.
  */
 
+import { reportSessionMismatch, SESSION_CHANGED_CODE, sessionHeaders } from './session-guard';
+
 export const API_PREFIX = '/api/v1';
 
 export interface ResponseMeta {
@@ -46,7 +48,7 @@ type Envelope<T> = {
 };
 
 export async function apiRequest<T>(path: string, opts: RequestOptions = {}): Promise<{ data: T; meta: ResponseMeta }> {
-  const headers: Record<string, string> = { accept: 'application/json' };
+  const headers: Record<string, string> = { accept: 'application/json', ...sessionHeaders(path) };
   if (opts.body !== undefined) headers['content-type'] = 'application/json';
   if (opts.idempotencyKey) headers['idempotency-key'] = opts.idempotencyKey;
 
@@ -74,6 +76,7 @@ export async function apiRequest<T>(path: string, opts: RequestOptions = {}): Pr
 
   if (!res.ok || !envelope || envelope.success !== true) {
     const err = envelope?.error;
+    if (err?.code === SESSION_CHANGED_CODE) reportSessionMismatch();
     if (err) throw new ApiError(res.status, err.code, err.message, err.requestId, err.details);
     throw new ApiError(
       res.status,

@@ -11,6 +11,7 @@ import { Field } from '@/components/ui/Field';
 import { ErrorState } from '@/components/ui/States';
 import { api, ApiError } from '@/lib/api';
 import { homeFor } from '@/lib/hooks';
+import { adoptSessionAccount } from '@/lib/session-guard';
 import { goAfterAuth, safeNext } from '@/lib/navigation';
 import type { User } from '@/lib/types';
 
@@ -52,6 +53,7 @@ export function RegisterForm() {
         role,
         ...(phone ? { phone } : {}),
       });
+      adoptSessionAccount(res.user);
       await mutate(() => true, undefined, { revalidate: false });
       await mutate('/auth/me', res.user, { revalidate: false });
       const next = safeNext(params.get('next'));

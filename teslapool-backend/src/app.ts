@@ -73,7 +73,7 @@ export function createApp(deps: AppDeps): Express {
       origin: (origin, cb) => cb(null, !origin || cfg.corsOrigins.includes(origin)),
       credentials: true, // allows the HttpOnly session cookie from allow-listed origins
       methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key', 'X-Request-ID'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key', 'X-Request-ID', 'X-Session-User'],
       exposedHeaders: ['X-Request-ID', 'Idempotent-Replayed', 'RateLimit', 'RateLimit-Policy'],
       maxAge: 600,
     }),

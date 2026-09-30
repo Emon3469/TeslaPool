@@ -3,7 +3,7 @@ import { describeCheck } from '../../src/pools/explain';
 import { evaluateCandidate, MatchContext } from '../../src/pools/matching-engine';
 
 const ctx: MatchContext = {
-  rules: { maxCapacity: 3, pickupMaxHops: 1, destinationMaxHops: 2, maxDetourKm: 1.5, maxDetourRatio: 0.3, maxStops: 4, allowLateJoin: false, candidateLimit: 50 },
+  rules: { maxCapacity: 3, pickupMaxHops: 1, destinationMaxHops: 2, maxDetourKm: 1.5, maxDetourRatio: 0.3, urgentDetour: { km: 0.5, ratio: 0.1 }, flexibleDetour: { km: 3, ratio: 0.6 }, maxStops: 4, allowLateJoin: false, candidateLimit: 50 },
   weights: { distance: 0.35, detour: 0.25, stops: 0.15, timeVariance: 0.1, sharing: 0.15 },
   distance: new ZoneGraphDistanceProvider(),
 };

@@ -69,6 +69,11 @@ const schema = z.object({
   DESTINATION_MAX_HOPS: int(2),
   MAX_DETOUR_KM: num(1.5),
   MAX_DETOUR_RATIO: num(0.3),
+  // Per-rider urgency (chosen at request time): same max(km, ratio × solo) formula, own limits.
+  URGENT_MAX_DETOUR_KM: num(0.5),
+  URGENT_MAX_DETOUR_RATIO: num(0.1),
+  FLEXIBLE_MAX_DETOUR_KM: num(3),
+  FLEXIBLE_MAX_DETOUR_RATIO: num(0.6),
   MAX_STOPS: int(4),
   ALLOW_LATE_JOIN: bool.default('false'),
   MATCH_CANDIDATE_LIMIT: int(50),
@@ -161,6 +166,13 @@ function load() {
   const weights = [e.SCORE_WEIGHT_DISTANCE, e.SCORE_WEIGHT_DETOUR, e.SCORE_WEIGHT_STOPS, e.SCORE_WEIGHT_TIME_VARIANCE, e.SCORE_WEIGHT_SHARING];
   if (weights.some((w) => w < 0)) throw new Error('Scoring weights must be non-negative');
   if (e.MAX_DETOUR_RATIO < 0 || e.MAX_DETOUR_KM < 0) throw new Error('Detour limits must be non-negative');
+  // Urgent must never be looser than standard, nor flexible tighter: otherwise the labels would lie.
+  if (e.URGENT_MAX_DETOUR_KM < 0 || e.URGENT_MAX_DETOUR_RATIO < 0 || e.URGENT_MAX_DETOUR_KM > e.MAX_DETOUR_KM || e.URGENT_MAX_DETOUR_RATIO > e.MAX_DETOUR_RATIO) {
+    throw new Error('URGENT_MAX_DETOUR_* must be between 0 and the standard MAX_DETOUR_* limits');
+  }
+  if (e.FLEXIBLE_MAX_DETOUR_KM < e.MAX_DETOUR_KM || e.FLEXIBLE_MAX_DETOUR_RATIO < e.MAX_DETOUR_RATIO) {
+    throw new Error('FLEXIBLE_MAX_DETOUR_* must be at least the standard MAX_DETOUR_* limits');
+  }
   if (e.FARE_MAX_DISCOUNT < 0 || e.FARE_MAX_DISCOUNT > 1) throw new Error('FARE_MAX_DISCOUNT must be within [0, 1]');
 
   const toBps = (fraction: number) => Math.round(fraction * 10_000);
@@ -213,6 +225,8 @@ function load() {
       destinationMaxHops: e.DESTINATION_MAX_HOPS,
       maxDetourKm: e.MAX_DETOUR_KM,
       maxDetourRatio: e.MAX_DETOUR_RATIO,
+      urgentDetour: { km: e.URGENT_MAX_DETOUR_KM, ratio: e.URGENT_MAX_DETOUR_RATIO },
+      flexibleDetour: { km: e.FLEXIBLE_MAX_DETOUR_KM, ratio: e.FLEXIBLE_MAX_DETOUR_RATIO },
       maxStops: e.MAX_STOPS,
       allowLateJoin: e.ALLOW_LATE_JOIN,
       candidateLimit: e.MATCH_CANDIDATE_LIMIT,

@@ -728,6 +728,15 @@
                 "firstName": {
                   "type": "string"
                 },
+                "flexibility": {
+                  "type": "string",
+                  "enum": [
+                    "URGENT",
+                    "STANDARD",
+                    "FLEXIBLE"
+                  ],
+                  "description": "URGENT riders need an almost direct route"
+                },
                 "seats": {
                   "type": "integer"
                 },
@@ -764,6 +773,7 @@
               "required": [
                 "rideRequestId",
                 "firstName",
+                "flexibility",
                 "seats",
                 "pickupZone",
                 "dropoffZone",
@@ -842,6 +852,14 @@
           "requestedSeats": {
             "type": "integer"
           },
+          "flexibility": {
+            "type": "string",
+            "enum": [
+              "URGENT",
+              "STANDARD",
+              "FLEXIBLE"
+            ]
+          },
           "waitingSeconds": {
             "type": "integer"
           },
@@ -855,6 +873,7 @@
           "pickupZone",
           "dropoffZone",
           "requestedSeats",
+          "flexibility",
           "waitingSeconds",
           "decision"
         ]
@@ -1085,6 +1104,57 @@
               },
               "allowLateJoin": {
                 "type": "boolean"
+              },
+              "detourByFlexibility": {
+                "type": "object",
+                "properties": {
+                  "URGENT": {
+                    "type": "object",
+                    "properties": {
+                      "km": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "km",
+                      "ratio"
+                    ]
+                  },
+                  "STANDARD": {
+                    "type": "object",
+                    "properties": {
+                      "km": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "km",
+                      "ratio"
+                    ]
+                  },
+                  "FLEXIBLE": {
+                    "type": "object",
+                    "properties": {
+                      "km": {
+                        "type": "number"
+                      },
+                      "ratio": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "km",
+                      "ratio"
+                    ]
+                  }
+                },
+                "description": "Each rider’s own detour limit: max(km, ratio × solo distance)"
               }
             },
             "required": [
@@ -1094,7 +1164,8 @@
               "maxDetourKm",
               "maxDetourRatio",
               "maxStops",
-              "allowLateJoin"
+              "allowLateJoin",
+              "detourByFlexibility"
             ]
           },
           "fare": {
@@ -1808,6 +1879,14 @@
               "TESLAPAY"
             ]
           },
+          "flexibility": {
+            "type": "string",
+            "enum": [
+              "URGENT",
+              "STANDARD",
+              "FLEXIBLE"
+            ]
+          },
           "payment": {
             "type": "object",
             "nullable": true,
@@ -1978,6 +2057,7 @@
           "fareSource",
           "fareBreakdown",
           "paymentMethod",
+          "flexibility",
           "payment",
           "pool",
           "finalFare",
@@ -2132,6 +2212,16 @@
               "BIKE_RIDESHARE"
             ],
             "description": "Vehicle class to quote and match against; defaults to AUTO_RICKSHAW (a \"Tesla\")."
+          },
+          "flexibility": {
+            "type": "string",
+            "enum": [
+              "URGENT",
+              "STANDARD",
+              "FLEXIBLE"
+            ],
+            "default": "STANDARD",
+            "description": "How much detour you accept. URGENT: almost direct (the route goes your way first; fewer pools fit). STANDARD: the default limit. FLEXIBLE: you accept a longer ride so more people can share (more pools fit). Your choice only sets your own limit; everyone else keeps theirs."
           },
           "paymentMethod": {
             "type": "string",

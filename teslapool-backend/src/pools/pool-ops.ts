@@ -45,7 +45,13 @@ export function toSnapshot(pool: PoolWithMembers): PoolSnapshot {
     status: pool.status,
     capacity: pool.capacity,
     occupiedSeats: occupied,
-    members: active.map((m) => ({ rideRequestId: m.rideRequestId, pickupZone: m.rideRequest.pickupZone as Zone, dropoffZone: m.rideRequest.dropoffZone as Zone, seats: m.seats })),
+    members: active.map((m) => ({
+      rideRequestId: m.rideRequestId,
+      pickupZone: m.rideRequest.pickupZone as Zone,
+      dropoffZone: m.rideRequest.dropoffZone as Zone,
+      seats: m.seats,
+      flexibility: m.rideRequest.flexibility,
+    })),
   };
 }
 

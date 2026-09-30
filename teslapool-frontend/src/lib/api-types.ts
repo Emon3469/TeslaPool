@@ -3365,6 +3365,11 @@ export interface components {
                  */
                 rideRequestId: string | null;
                 firstName: string;
+                /**
+                 * @description URGENT riders need an almost direct route
+                 * @enum {string}
+                 */
+                flexibility: "URGENT" | "STANDARD" | "FLEXIBLE";
                 seats: number;
                 pickupZone: string;
                 dropoffZone: string;
@@ -3392,6 +3397,8 @@ export interface components {
             pickupZone: string;
             dropoffZone: string;
             requestedSeats: number;
+            /** @enum {string} */
+            flexibility: "URGENT" | "STANDARD" | "FLEXIBLE";
             waitingSeconds: number;
             decision: components["schemas"]["MatchDecision"];
         };
@@ -3458,6 +3465,21 @@ export interface components {
                 maxDetourRatio: number;
                 maxStops: number;
                 allowLateJoin: boolean;
+                /** @description Each rider’s own detour limit: max(km, ratio × solo distance) */
+                detourByFlexibility: {
+                    URGENT?: {
+                        km: number;
+                        ratio: number;
+                    };
+                    STANDARD?: {
+                        km: number;
+                        ratio: number;
+                    };
+                    FLEXIBLE?: {
+                        km: number;
+                        ratio: number;
+                    };
+                };
             };
             fare: {
                 /** @enum {string} */
@@ -3656,6 +3678,8 @@ export interface components {
             } | null;
             /** @enum {string} */
             paymentMethod: "CASH" | "TESLAPAY";
+            /** @enum {string} */
+            flexibility: "URGENT" | "STANDARD" | "FLEXIBLE";
             payment: {
                 /** @enum {string} */
                 method: "CASH" | "TESLAPAY";
@@ -3744,6 +3768,12 @@ export interface components {
              * @enum {string}
              */
             vehicleType?: "AUTO_RICKSHAW" | "RICKSHAW" | "BIKE_RIDESHARE";
+            /**
+             * @description How much detour you accept. URGENT: almost direct (the route goes your way first; fewer pools fit). STANDARD: the default limit. FLEXIBLE: you accept a longer ride so more people can share (more pools fit). Your choice only sets your own limit; everyone else keeps theirs.
+             * @default STANDARD
+             * @enum {string}
+             */
+            flexibility: "URGENT" | "STANDARD" | "FLEXIBLE";
             /**
              * @description CASH (collected by the driver) or TESLAPAY (simulated wallet; balance must cover the quoted solo fare).
              * @default CASH

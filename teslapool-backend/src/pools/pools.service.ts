@@ -74,7 +74,7 @@ export class PoolService {
   }
 
   private asPassenger(ride: RideRequest): PlannedPassenger {
-    return { rideRequestId: ride.id, pickupZone: ride.pickupZone as Zone, dropoffZone: ride.dropoffZone as Zone, seats: ride.requestedSeats };
+    return { rideRequestId: ride.id, pickupZone: ride.pickupZone as Zone, dropoffZone: ride.dropoffZone as Zone, seats: ride.requestedSeats, flexibility: ride.flexibility };
   }
 
   /** Attach the fare this passenger would pay on the chosen route (integer poysha). */
@@ -262,12 +262,16 @@ export class PoolService {
         pickupZone: ride.pickupZone,
         dropoffZone: ride.dropoffZone,
         requestedSeats: ride.requestedSeats,
+        flexibility: ride.flexibility,
         waitingSeconds: Math.max(0, Math.round((now - ride.createdAt.getTime()) / 1000)),
         decision: this.price(evaluateCandidate(snapshot, this.asPassenger(ride), this.ctx), ride),
       }))
+      // Feasible first; among those, urgent riders first (urgency already costs them matches, since their
+      // tight limit fits fewer pools, so it can't be used to jump the queue for free), then best route, then longest wait.
       .sort(
         (a, b) =>
           Number(b.decision.decision === 'MATCHED') - Number(a.decision.decision === 'MATCHED') ||
+          (b.decision.decision === 'MATCHED' ? Number(b.flexibility === 'URGENT') - Number(a.flexibility === 'URGENT') : 0) ||
           (a.decision.score ?? Infinity) - (b.decision.score ?? Infinity) ||
           b.waitingSeconds - a.waitingSeconds,
       );
@@ -332,7 +336,7 @@ export class PoolService {
   async replanWithout(tx: Tx, poolId: string, removedRideId: string, actorId: string, cause: 'LEAVE' | 'CANCEL') {
     const pool = await loadLockedPool(tx, poolId);
     const remaining = activeMembers(pool).filter((m) => m.rideRequestId !== removedRideId);
-    const passengers = remaining.map((m) => ({ rideRequestId: m.rideRequestId, pickupZone: m.rideRequest.pickupZone as Zone, dropoffZone: m.rideRequest.dropoffZone as Zone, seats: m.seats }));
+    const passengers = remaining.map((m) => ({ rideRequestId: m.rideRequestId, pickupZone: m.rideRequest.pickupZone as Zone, dropoffZone: m.rideRequest.dropoffZone as Zone, seats: m.seats, flexibility: m.rideRequest.flexibility }));
     // Removing a passenger never lengthens anyone else's ride on a metric graph, so a feasible plan always exists.
     const plan = passengers.length ? bestPlanFor(passengers, this.ctx) : undefined;
     if (passengers.length && !plan) throw new Error(`invariant: no feasible plan after removing a passenger from pool ${poolId}`);

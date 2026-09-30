@@ -22,6 +22,7 @@ export type CreateRideRequest = Schemas['CreateRideRequest'];
 export type ZoneCode = CreateRideRequest['pickupZone'];
 export type VehicleType = Vehicle['vehicleType'];
 export type PaymentMethod = Ride['paymentMethod'];
+export type Flexibility = Ride['flexibility'];
 
 /** `GET /driver/status` returns the pool as a loose object; it is the same shape as `Pool`. */
 export type DriverStatus = Omit<Schemas['DriverStatus'], 'pool'> & { pool: Pool | null };

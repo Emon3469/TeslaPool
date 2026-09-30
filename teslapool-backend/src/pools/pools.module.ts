@@ -57,6 +57,7 @@ const PoolDto = registry.register(
       z.object({
         rideRequestId: z.string().uuid().nullable().openapi({ description: 'Only visible to the driver, admins, and the passenger themself' }),
         firstName: z.string(),
+        flexibility: z.enum(['URGENT', 'STANDARD', 'FLEXIBLE']).openapi({ description: 'URGENT riders need an almost direct route' }),
         seats: z.number().int(),
         pickupZone: z.string(),
         dropoffZone: z.string(),
@@ -108,6 +109,7 @@ export function toPoolDto(pool: PoolView, isStaff: boolean, viewerId: string): z
       return {
         rideRequestId: visible ? m.rideRequestId : null,
         firstName: m.passenger.name.split(' ')[0],
+        flexibility: m.rideRequest.flexibility,
         seats: m.seats,
         pickupZone: ZONE_INFO[m.rideRequest.pickupZone as Zone].displayName,
         dropoffZone: ZONE_INFO[m.rideRequest.dropoffZone as Zone].displayName,
@@ -135,6 +137,7 @@ const CompatibleRequestDto = registry.register(
     pickupZone: z.string(),
     dropoffZone: z.string(),
     requestedSeats: z.number().int(),
+    flexibility: z.enum(['URGENT', 'STANDARD', 'FLEXIBLE']),
     waitingSeconds: z.number().int(),
     decision: MatchDecisionDto,
   }),

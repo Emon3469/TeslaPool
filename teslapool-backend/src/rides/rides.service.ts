@@ -1,4 +1,4 @@
-import { Prisma, type PaymentMethod, type PrismaClient, type RideRequest } from '@prisma/client';
+import { Prisma, type PaymentMethod, type PrismaClient, type RideFlexibility, type RideRequest } from '@prisma/client';
 import type { AppConfig } from '../config/env';
 import { isUniqueViolation, withTransaction } from '../common/db';
 import type { AuthPrincipal } from '../common/express-augment';
@@ -24,6 +24,7 @@ export interface CreateRideInput {
   requestedSeats: number;
   vehicleType?: VehicleType;
   paymentMethod?: PaymentMethod;
+  flexibility?: RideFlexibility;
   context?: { traffic?: TrafficLevel; weather?: Weather; timeOfDay?: TimeOfDay };
 }
 
@@ -97,6 +98,7 @@ export class RideService {
             distanceChargePoysha: prediction.fareBreakdown.distanceChargePoysha,
             timeChargePoysha: prediction.fareBreakdown.timeChargePoysha,
             paymentMethod,
+            flexibility: input.flexibility ?? 'STANDARD',
           },
         });
         await appendRideEvents(tx, [{

@@ -69,6 +69,13 @@ export const VEHICLE_LABEL: Record<string, string> = {
   BIKE_RIDESHARE: 'Bike',
 };
 
+/** A rider's urgency: it sets only their own detour limit (see /meta rules.detourByFlexibility). */
+export const FLEXIBILITY_LABEL: Record<string, { label: string; hint: string }> = {
+  URGENT: { label: 'Urgent', hint: 'Almost direct. Fewer pools fit.' },
+  STANDARD: { label: 'Standard', hint: 'Usual detour limit.' },
+  FLEXIBLE: { label: 'Flexible', hint: 'Longer ride OK. More pools fit.' },
+};
+
 export function percent(ratio: number | null | undefined, digits = 0): string {
   if (ratio === null || ratio === undefined || Number.isNaN(ratio)) return '—';
   return `${(ratio * 100).toFixed(digits)}%`;

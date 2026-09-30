@@ -39,10 +39,16 @@ export function describeCheck(rule: HardRule, passed: boolean, code: MatchReason
         ? `Route has ${n(d.chosenRouteStops ?? d.minimumStops)} stops (limit ${n(d.maxStops)})`
         : `Every route would need more than ${n(d.maxStops)} stops`;
     case 'DETOUR':
-      if (!passed) return `Every possible route adds too much detour for someone (best case ${n(d.bestWorstCaseDetourKm)} km)`;
-      return d.chosenRouteMaxDetourKm !== undefined
-        ? `Chosen route adds at most ${n(d.chosenRouteMaxDetourKm)} km for any passenger (within each passenger's limit)`
-        : `A route exists within every passenger's detour limit`;
+      if (!passed) {
+        const urgentBlocks = Array.isArray(d.limitingFlexibilities) && d.limitingFlexibilities.includes('URGENT');
+        return urgentBlocks
+          ? `An urgent rider needs an almost direct route, and no stop order also keeps everyone else within their detour limit (best case ${n(d.bestWorstCaseDetourKm)} km)`
+          : `Every possible route adds too much detour for someone (best case ${n(d.bestWorstCaseDetourKm)} km)`;
+      }
+      if (d.chosenRouteMaxDetourKm === undefined) return `A route exists within every passenger's detour limit`;
+      return n(d.urgentPassengers) > 0
+        ? `Chosen route keeps the urgent rider's trip almost direct and adds at most ${n(d.chosenRouteMaxDetourKm)} km for anyone (within each passenger's limit)`
+        : `Chosen route adds at most ${n(d.chosenRouteMaxDetourKm)} km for any passenger (within each passenger's limit)`;
   }
 }
 

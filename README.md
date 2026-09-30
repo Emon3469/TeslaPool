@@ -9,8 +9,8 @@ A transaction-safe, explainable ride-pooling engine for Dhaka’s three-seat aut
 [![Live demo](https://img.shields.io/badge/▶_Live_demo-teslapool.vercel.app-C1F11D?style=for-the-badge&labelColor=141414)](https://teslapool.vercel.app/)
 [![Technical overview](https://img.shields.io/badge/📄_Technical_overview-PDF-141414?style=for-the-badge)](docs/TeslaPool-Technical-Overview.pdf)
 
-![Version](https://img.shields.io/badge/version-1.0.4-141414)
-![Tests](https://img.shields.io/badge/tests-314_passing-3d5200)
+![Version](https://img.shields.io/badge/version-1.0.5-141414)
+![Tests](https://img.shields.io/badge/tests-326_passing-3d5200)
 ![Capacity violations](https://img.shields.io/badge/capacity_violations-0-3d5200)
 ![npm audit](https://img.shields.io/badge/npm_audit-0_vulnerabilities-3d5200)
 <br>
@@ -91,13 +91,21 @@ candidates ──► 6 hard rules ──► every stop order ──► score + r
 | 3 | New pickup within 1 zone hop of **every** current pickup | `PICKUP_MAX_HOPS=1` |
 | 4 | New destination within 2 hops of **every** current destination | `DESTINATION_MAX_HOPS=2` |
 | 5 | Some pickup-before-drop-off order with ≤ 4 stops | `MAX_STOPS=4` |
-| 6 | In that order, **every** passenger’s detour ≤ max(1.5 km, 30% of their solo trip) | configurable |
+| 6 | In that order, **every** passenger’s detour ≤ their **own** limit. Detour = extra km waiting while the car serves others before pickup + extra km in the car | Standard: max(1.5 km, 30%) · Urgent: max(0.5 km, 10%) · Flexible: max(3 km, 60%) |
 
 Feasible plans are ranked by a normalised, configurable score (lower is better):
 
 ```
 S = 0.35·distance + 0.25·detour + 0.15·stops + 0.10·timeVariance − 0.15·sharing
 ```
+
+**Urgency, chosen by each rider.** Nusrat is late, so she books **Urgent**. Her own detour limit drops to 0.5 km, while everyone else keeps theirs:
+- **With a flexible Rafiq:** only **Banani → Mohakhali → Gulshan 1** fits, so the car goes her way first (Rafiq rides 2.9 km extra, within his 3 km).
+- **With a standard Rafiq:** no order fits both, so he isn’t squeezed in. He waits for another pool, with the reason shown.
+
+One rider’s urgency never lengthens anyone else’s trip past *their* limit. Urgency isn’t free, either: fewer pools fit an urgent rider, so it can’t be used just to jump the queue. The driver sees urgent riders first among those who fit.
+
+Waiting counts as detour. Without that, the engine could “pool” by dropping one rider and driving back for the next, with zero shared km and a long wait for the second rider.
 
 `timeVariance` is the fairness term: it penalises plans that are efficient on average but make one rider absorb most of the detour. With ≤ 3 seats and ≤ 4 stops, the enumeration is exhaustive and cheap, so the best plan is exact, not approximate.
 
@@ -219,10 +227,10 @@ Evolution: stateless API instances behind a load balancer · Redis for rate limi
 | Suite | What it covers | Tests |
 |---|---|---|
 | Backend unit | Route planner, matching rules, scoring, fare engine, state machine (all 36 pairs), explanations | |
-| Backend integration | Real PostgreSQL: auth security, IDOR, rides, pools, payments, driver, ML fallback, email codes, rate limits | **222** |
+| Backend integration | Real PostgreSQL: auth security, IDOR, rides, pools, payments, driver, ML fallback, email codes, rate limits | **240** |
 | Backend e2e + concurrency | Demo story and fare-by-hand oracle over HTTP; last-seat races, double-pool races, idempotent replays | |
-| Frontend unit (Vitest) | API client, fare, geo, ride, format, stats, UI components | **47** |
-| Browser e2e (Playwright) | Auth, passenger, driver, ops and public pages against the real API; **every number on screen is compared with the API’s answer** | **29** |
+| Frontend unit (Vitest) | API client, fare, geo, ride, format, stats, UI components | **54** |
+| Browser e2e (Playwright) | Auth, passenger, driver, ops and public pages against the real API; **every number on screen is compared with the API’s answer** | **32** |
 
 **Security:** Argon2id · HttpOnly JWT cookie + Origin-checked writes (CSRF) · pinned HS256 with `iss`/`aud` · role reloaded from the DB on every request · object-level authorization (IDOR) · `zod.strict()` (no mass assignment) · rate limits · HMAC-stored email codes · idempotency keys · no stack traces in errors · non-root containers · `npm audit`: 0 vulnerabilities.
 
@@ -259,9 +267,9 @@ npm ci && npm run dev             # web on http://localhost:3000
 **Tests:**
 
 ```bash
-cd teslapool-backend && npm run test:all        # 222 tests (needs PostgreSQL)
-cd teslapool-frontend && npm test               # 47 unit tests
-cd teslapool-frontend && npm run test:e2e       # 29 browser tests (needs the stack running)
+cd teslapool-backend && npm run test:all        # 240 tests (needs PostgreSQL)
+cd teslapool-frontend && npm test               # 54 unit tests
+cd teslapool-frontend && npm run test:e2e       # 32 browser tests (needs the stack running)
 ```
 
 Optional ML sidecar: `pip install -r teslapool-backend/ml/inference/requirements.txt`, run `uvicorn app:app --port 8000` from `ml/inference`, then set `ML_SIDECAR_URL=http://localhost:8000`. Retrain with `npm run ml:train`.

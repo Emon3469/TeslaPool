@@ -30,6 +30,7 @@ const MetaDto = registry.register(
     rules: z.object({
       poolMaxCapacity: z.number().int(), pickupMaxHops: z.number().int(), destinationMaxHops: z.number().int(),
       maxDetourKm: z.number(), maxDetourRatio: z.number(), maxStops: z.number().int(), allowLateJoin: z.boolean(),
+      detourByFlexibility: z.record(z.enum(['URGENT', 'STANDARD', 'FLEXIBLE']), z.object({ km: z.number(), ratio: z.number() })).openapi({ description: 'Each rider’s own detour limit: max(km, ratio × solo distance)' }),
     }),
     fare: z.object({
       currency: z.literal('BDT'), minorUnit: z.literal('poysha'), minorUnitsPerBdt: z.literal(100),
@@ -62,6 +63,11 @@ export function metaRouter(cfg: AppConfig, distance: DistanceProvider): Router {
     rules: {
       poolMaxCapacity: cfg.pool.maxCapacity, pickupMaxHops: cfg.pool.pickupMaxHops, destinationMaxHops: cfg.pool.destinationMaxHops,
       maxDetourKm: cfg.pool.maxDetourKm, maxDetourRatio: cfg.pool.maxDetourRatio, maxStops: cfg.pool.maxStops, allowLateJoin: cfg.pool.allowLateJoin,
+      detourByFlexibility: {
+        URGENT: cfg.pool.urgentDetour,
+        STANDARD: { km: cfg.pool.maxDetourKm, ratio: cfg.pool.maxDetourRatio },
+        FLEXIBLE: cfg.pool.flexibleDetour,
+      },
     },
     fare: {
       currency: 'BDT', minorUnit: 'poysha', minorUnitsPerBdt: 100,

@@ -155,6 +155,11 @@ export function evaluateCandidate(pool: PoolSnapshot, request: PlannedPassenger,
   const detourOk = detourPool.some((p) => !p.violations.includes('DETOUR_TOO_HIGH'));
   const minStops = Math.min(...plans.map((p) => p.stopCount));
   const minWorstDetour = Math.min(...detourPool.map((p) => p.maxDetourKm));
+  const urgent = passengers.filter((p) => p.flexibility === 'URGENT');
+  // Which riders' own limits block every order? (Named by flexibility so the reason is clear, e.g. an urgent rider.)
+  const blockedBy = detourOk
+    ? []
+    : [...new Set(detourPool.flatMap((p) => p.passengers.filter((l) => l.detourKm > l.allowedDetourKm).map((l) => l.flexibility)))];
   checks.push({
     rule: 'STOP_LIMIT',
     passed: withinStops.length > 0,
@@ -169,7 +174,10 @@ export function evaluateCandidate(pool: PoolSnapshot, request: PlannedPassenger,
       bestWorstCaseDetourKm: minWorstDetour,
       maxDetourKm: rules.maxDetourKm,
       maxDetourRatio: rules.maxDetourRatio,
-      policy: 'allowed = max(MAX_DETOUR_KM, MAX_DETOUR_RATIO * soloDistance), checked for every passenger',
+      policy: 'allowed = max(km, ratio * soloDistance) for each passenger’s own urgency (urgent / standard / flexible), checked for every passenger',
+      urgentPassengers: urgent.length,
+      requestFlexibility: request.flexibility ?? 'STANDARD',
+      ...(blockedBy.length ? { limitingFlexibilities: blockedBy } : {}),
     },
   });
 

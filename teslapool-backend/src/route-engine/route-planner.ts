@@ -10,17 +10,46 @@ import { Zone } from '../geography/zones';
  * cheap, exact and deterministic. No heuristics, no randomness.
  */
 
+/**
+ * How much detour a passenger accepts, chosen when they request the ride:
+ *   URGENT    almost direct (e.g. already late): the route must go their way first
+ *   STANDARD  the default rule
+ *   FLEXIBLE  happy to ride further so more people can share
+ * Urgency never borrows from anyone else: every order must satisfy EVERY passenger's own limit.
+ */
+export type Flexibility = 'URGENT' | 'STANDARD' | 'FLEXIBLE';
+export const FLEXIBILITIES: readonly Flexibility[] = ['URGENT', 'STANDARD', 'FLEXIBLE'];
+
+export interface DetourLimit {
+  km: number;
+  ratio: number;
+}
+
 export interface PlannedPassenger {
   rideRequestId: string;
   pickupZone: Zone;
   dropoffZone: Zone;
   seats: number;
+  /** Defaults to STANDARD. */
+  flexibility?: Flexibility;
 }
 
 export interface RouteRules {
+  /** STANDARD limit. */
   maxDetourKm: number;
   maxDetourRatio: number;
   maxStops: number;
+  urgentDetour?: DetourLimit;
+  flexibleDetour?: DetourLimit;
+}
+
+export const DEFAULT_URGENT_DETOUR: DetourLimit = { km: 0.5, ratio: 0.1 };
+export const DEFAULT_FLEXIBLE_DETOUR: DetourLimit = { km: 3, ratio: 0.6 };
+
+export function detourLimitFor(flexibility: Flexibility | undefined, rules: RouteRules): DetourLimit {
+  if (flexibility === 'URGENT') return rules.urgentDetour ?? DEFAULT_URGENT_DETOUR;
+  if (flexibility === 'FLEXIBLE') return rules.flexibleDetour ?? DEFAULT_FLEXIBLE_DETOUR;
+  return { km: rules.maxDetourKm, ratio: rules.maxDetourRatio };
 }
 
 export interface RouteStop {
@@ -31,10 +60,12 @@ export interface RouteStop {
 
 export interface PassengerLeg {
   rideRequestId: string;
+  flexibility: Flexibility;
   pickupSequence: number;
   dropoffSequence: number;
   soloDistanceKm: number;
   inVehicleDistanceKm: number;
+  /** Extra km versus a direct trip: waiting while the vehicle serves others before pickup + in-vehicle detour. */
   detourKm: number;
   allowedDetourKm: number;
   sharedDistanceKm: number;
@@ -64,9 +95,12 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
  *   allowed = max(MAX_DETOUR_KM, MAX_DETOUR_RATIO * soloDistance)
  * so short trips get an absolute 1.5 km floor and long trips a proportional
  * allowance. Example: 3.4 km solo -> max(1.5, 1.02) = 1.5 km.
+ * URGENT and FLEXIBLE passengers use their own (km, ratio) pair with the same formula:
+ * urgent 3.4 km -> max(0.5, 0.34) = 0.5 km; flexible 2.5 km -> max(3, 1.5) = 3 km.
  */
-export function allowedDetourKm(soloDistanceKm: number, rules: RouteRules): number {
-  return Math.max(rules.maxDetourKm, rules.maxDetourRatio * soloDistanceKm);
+export function allowedDetourKm(soloDistanceKm: number, rules: RouteRules, flexibility?: Flexibility): number {
+  const limit = detourLimitFor(flexibility, rules);
+  return Math.max(limit.km, limit.ratio * soloDistanceKm);
 }
 
 type Event = { kind: 'pickup' | 'dropoff'; passenger: PlannedPassenger };
@@ -137,6 +171,13 @@ export function evaluateStops(
     for (const id of s.dropoffs) index.set(id, { ...(index.get(id) ?? { pu: -1 }), do: i });
   });
 
+  // Detour a passenger's limit is checked against = extra distance BEFORE pickup (the vehicle serves others
+  // first while they wait) + extra distance IN the vehicle. Counting only in-vehicle distance would accept
+  // "drop Rafiq at Gulshan, come back to Banani for Nusrat": zero in-vehicle detour, but a 5 km wait.
+  const start = stops[0].zone;
+  const excessKm = (p: PlannedPassenger, pu: number, dropIdx: number, solo: number) =>
+    cumulative[pu] - distance.distanceKm(start, p.pickupZone) + (cumulative[dropIdx] - cumulative[pu] - solo);
+
   const legs: PassengerLeg[] = passengers.map((p) => {
     const { pu, do: dropIdx } = index.get(p.rideRequestId)!;
     const solo = distance.distanceKm(p.pickupZone, p.dropoffZone);
@@ -152,12 +193,13 @@ export function evaluateStops(
     }
     return {
       rideRequestId: p.rideRequestId,
+      flexibility: p.flexibility ?? 'STANDARD',
       pickupSequence: pu,
       dropoffSequence: dropIdx,
       soloDistanceKm: round2(solo),
       inVehicleDistanceKm: round2(inVehicle),
-      detourKm: round2(Math.max(0, inVehicle - solo)),
-      allowedDetourKm: round2(allowedDetourKm(solo, rules)),
+      detourKm: round2(Math.max(0, excessKm(p, pu, dropIdx, solo))),
+      allowedDetourKm: round2(allowedDetourKm(solo, rules, p.flexibility)),
       sharedDistanceKm: round2(shared),
       sharedFraction: inVehicle > 0 ? Math.round((shared / inVehicle) * 10_000) / 10_000 : 0,
     };
@@ -169,7 +211,7 @@ export function evaluateStops(
   const detourViolated = passengers.some((p) => {
     const { pu, do: dropIdx } = index.get(p.rideRequestId)!;
     const solo = distance.distanceKm(p.pickupZone, p.dropoffZone);
-    return cumulative[dropIdx] - cumulative[pu] - solo > allowedDetourKm(solo, rules) + EPS;
+    return excessKm(p, pu, dropIdx, solo) > allowedDetourKm(solo, rules, p.flexibility) + EPS;
   });
   if (detourViolated) violations.push('DETOUR_TOO_HIGH');
 

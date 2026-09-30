@@ -69,3 +69,13 @@ describe('route planner', () => {
     expect(three.length).toBeLessThanOrEqual(90);
   });
 });
+
+describe('detour limit by urgency', () => {
+  it('urgent: max(0.5 km, 10%); flexible: max(3 km, 60%); standard unchanged', () => {
+    expect(allowedDetourKm(3.4, rules, 'URGENT')).toBe(0.5);
+    expect(allowedDetourKm(10, rules, 'URGENT')).toBeCloseTo(1);
+    expect(allowedDetourKm(2.5, rules, 'FLEXIBLE')).toBe(3);
+    expect(allowedDetourKm(10, rules, 'FLEXIBLE')).toBeCloseTo(6);
+    expect(allowedDetourKm(3.4, rules, 'STANDARD')).toBe(allowedDetourKm(3.4, rules));
+  });
+});
